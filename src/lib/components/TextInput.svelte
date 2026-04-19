@@ -1,8 +1,9 @@
 <script lang="ts">
-	let { value, placeholder }: { value: string; placeholder: string | null } = $props();
+	let { value = $bindable(), placeholder }: { value: string; placeholder: string | null } =
+		$props();
 </script>
 
-<textarea class="text-input" {placeholder}>{value}</textarea>
+<textarea class="text-input" bind:value {placeholder}></textarea>
 
 <style lang="scss">
 	.text-input {
@@ -15,6 +16,7 @@
 		min-height: 100px;
 		resize: vertical;
 		font-family: inherit;
+		max-height: 30vh;
 		// font-size: inherit;
 	}
 </style>
