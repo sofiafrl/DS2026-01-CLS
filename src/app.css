@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+:root {
+    --background-color: #F5F5F7;
+    --border-radius: 10px;
+    --max-width: 45vh;
+    --padding: 10px;
+}
+
+body {
+  padding: var(--padding);
+  font-family: 'Plus Jakarta Sans';
+  background-color: var(--background-color);
+
+  max-width: var(--max-width); /* 9/20 aspect ratio */
+  margin-inline: auto;         
+  min-height: 100vh;
+  box-sizing: border-box;
+}
