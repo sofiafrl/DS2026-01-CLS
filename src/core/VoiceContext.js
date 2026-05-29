@@ -1,16 +1,18 @@
-const BASE_OCTAVES = [6, 5, 4, 3];
-const BASE_VOLUMES = [100, 80, 60, 40];
-const BASE_INSTRUMENTS = [6, 20, 0, 70];
+import { clampInstrument, clampVolume, getVoiceProfile, MUSIC_LIMITS } from './MusicDefaults.js';
 
 export class VoiceContext {
   constructor({ voiceIndex, delayBeats = 0, initialBpm = 120, initialVolume, initialInstrument, initialOctave }) {
+    const profile = getVoiceProfile(voiceIndex);
+
     this.voiceIndex = voiceIndex;
     this.beat = delayBeats;
     this.bpm = initialBpm;
-    this.baseOctave = initialOctave ?? BASE_OCTAVES[voiceIndex % BASE_OCTAVES.length];
+    this.baseOctave = initialOctave ?? profile.baseOctave;
     this.octave = this.baseOctave;
-    this.volume = initialVolume ?? BASE_VOLUMES[voiceIndex % BASE_VOLUMES.length];
-    this.instrument = initialInstrument ?? BASE_INSTRUMENTS[voiceIndex % BASE_INSTRUMENTS.length];
+    // Interface options currently override only the first voice.
+    // Other voices keep their Phase 2 fugue profiles.
+    this.volume = initialVolume ?? profile.baseVolume;
+    this.instrument = initialInstrument ?? profile.baseInstrument;
     this.lastNote = null;
     this.lastProcessedWasNote = false;
     this.events = [];
@@ -25,19 +27,20 @@ export class VoiceContext {
   }
 
   setInstrument(program) {
-    this.instrument = Math.max(0, Math.min(127, Number(program)));
+    this.instrument = clampInstrument(program);
   }
 
   doubleVolume() {
-    this.volume = Math.min(127, this.volume * 2);
+    this.volume = clampVolume(this.volume * 2);
   }
 
   increaseOctave() {
-    this.octave = this.octave < 9 ? this.octave + 1 : this.baseOctave;
+    // When octave commands exceed the allowed range, return to the voice base octave.
+    this.octave = this.octave < MUSIC_LIMITS.maxOctave ? this.octave + 1 : this.baseOctave;
   }
 
   decreaseOctave() {
-    this.octave = this.octave > 0 ? this.octave - 1 : this.baseOctave;
+    this.octave = this.octave > MUSIC_LIMITS.minOctave ? this.octave - 1 : this.baseOctave;
   }
 
   increaseBpm() {
@@ -45,6 +48,6 @@ export class VoiceContext {
   }
 
   decreaseBpm() {
-    this.bpm = Math.max(20, this.bpm - 10);
+    this.bpm = Math.max(MUSIC_LIMITS.minBpm, this.bpm - 10);
   }
 }
