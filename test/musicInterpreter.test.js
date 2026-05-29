@@ -9,6 +9,17 @@ assert.equal(piece.metadata.voiceCount, 2);
 assert.equal(piece.voices[0].events.find((event) => event.type === 'note').note, 'C');
 assert.equal(piece.voices[1].events.find((event) => event.type === 'note').beat, 4);
 
+const voiceProfiles = interpreter.interpret('[0] C\n[0] C\n[0] C\n[0] C\n[0] C');
+assert.equal(voiceProfiles.voices[0].baseOctave, 6);
+assert.equal(voiceProfiles.voices[1].baseOctave, 5);
+assert.equal(voiceProfiles.voices[2].baseOctave, 4);
+assert.equal(voiceProfiles.voices[3].baseOctave, 3);
+assert.equal(voiceProfiles.voices[4].baseOctave, 6);
+assert.equal(voiceProfiles.voices[0].finalVolume, 100);
+assert.equal(voiceProfiles.voices[1].finalVolume, 80);
+assert.equal(voiceProfiles.voices[2].finalVolume, 60);
+assert.equal(voiceProfiles.voices[3].finalVolume, 40);
+
 const controls = interpreter.interpret('[0] C?DVE>F<', { bpm: 120, volume: 80, instrument: 0, octave: 5 });
 const notes = controls.voices[0].events.filter((event) => event.type === 'note');
 assert.equal(notes[0].octave, 5);

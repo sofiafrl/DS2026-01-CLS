@@ -2,6 +2,7 @@ import { TextParser } from './TextParser.js';
 import { VoiceContext } from './VoiceContext.js';
 import { DEFAULT_RULES } from './Rules.js';
 import { getInstrumentName } from './InstrumentCatalog.js';
+import { DEFAULT_MUSIC_OPTIONS } from './MusicDefaults.js';
 
 export class MusicInterpreter {
   constructor({ parser = new TextParser(), rules = DEFAULT_RULES } = {}) {
@@ -10,7 +11,7 @@ export class MusicInterpreter {
   }
 
   interpret(text, options = {}) {
-    const initialBpm = Number(options.bpm) || 120;
+    const initialBpm = Number(options.bpm) || DEFAULT_MUSIC_OPTIONS.bpm;
     const initialVolume = options.volume !== undefined ? Number(options.volume) : undefined;
     const initialInstrument = options.instrument !== undefined ? Number(options.instrument) : undefined;
     const initialOctave = options.octave !== undefined ? Number(options.octave) : undefined;
