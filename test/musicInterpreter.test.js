@@ -1,8 +1,26 @@
 import assert from 'node:assert/strict';
 import { MusicInterpreter } from '../src/core/MusicInterpreter.js';
 import { MidiWriter } from '../src/midi/MidiWriter.js';
+import { TextRule, assertTextRule } from '../src/core/TextRule.js';
 
 const interpreter = new MusicInterpreter();
+
+class TestRule extends TextRule {
+  matches(_character, _nextCharacter, _context) {
+    return true;
+  }
+
+  apply(_character, _context, _nextCharacter) {
+    return 1;
+  }
+}
+
+assert.equal(assertTextRule(new TestRule()) instanceof TextRule, true);
+assert.throws(() => new TextRule(), /TextRule is abstract/);
+assert.throws(
+  () => assertTextRule({ matches() {}, apply() {} }),
+  /Every text rule must extend TextRule and implement matches\(\) and apply\(\)\./
+);
 
 const piece = interpreter.interpret('[0] C D E F\n[4] G A B C', { bpm: 120, volume: 100, instrument: 6, octave: 6 });
 assert.equal(piece.metadata.voiceCount, 2);

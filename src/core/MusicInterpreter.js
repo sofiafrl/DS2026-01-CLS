@@ -3,11 +3,14 @@ import { VoiceContext } from './VoiceContext.js';
 import { DEFAULT_RULES } from './Rules.js';
 import { getInstrumentName } from './InstrumentCatalog.js';
 import { DEFAULT_MUSIC_OPTIONS } from './MusicDefaults.js';
+import { assertTextRule } from './TextRule.js';
 
 export class MusicInterpreter {
   constructor({ parser = new TextParser(), rules = DEFAULT_RULES } = {}) {
     this.parser = parser;
-    this.rules = rules;
+    // Validate rule objects once so the interpretation loop can stay focused
+    // on orchestration and polymorphic dispatch.
+    this.rules = rules.map(assertTextRule);
   }
 
   interpret(text, options = {}) {

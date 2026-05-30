@@ -1,4 +1,5 @@
 import { MusicEvent } from './MusicEvent.js';
+import { TextRule } from './TextRule.js';
 
 const NOTE_TO_SEMITONE = {
   C: 0,
@@ -58,7 +59,7 @@ function repeatLastNoteOrRest(context) {
   emitRest(context);
 }
 
-export class NoteRule {
+export class NoteRule extends TextRule {
   matches(character, nextCharacter) {
     return Object.prototype.hasOwnProperty.call(NOTE_TO_SEMITONE, character) || (character === 'M' && nextCharacter === 'b');
   }
@@ -77,7 +78,7 @@ export class NoteRule {
   }
 }
 
-export class LowercaseRestRule {
+export class LowercaseRestRule extends TextRule {
   matches(character) {
     return /^[a-h]$/.test(character);
   }
@@ -88,7 +89,7 @@ export class LowercaseRestRule {
   }
 }
 
-export class SpaceVolumeRule {
+export class SpaceVolumeRule extends TextRule {
   matches(character) {
     return character === ' ';
   }
@@ -99,7 +100,7 @@ export class SpaceVolumeRule {
   }
 }
 
-export class HarmonicaRule {
+export class HarmonicaRule extends TextRule {
   matches(character) {
     return character === '!';
   }
@@ -110,7 +111,7 @@ export class HarmonicaRule {
   }
 }
 
-export class BagpipeVowelRule {
+export class BagpipeVowelRule extends TextRule {
   matches(character) {
     return /^[OoIiUu]$/.test(character);
   }
@@ -121,7 +122,7 @@ export class BagpipeVowelRule {
   }
 }
 
-export class EvenDigitRule {
+export class EvenDigitRule extends TextRule {
   matches(character) {
     return /^[02468]$/.test(character); 
     //dígito par: trocar instrumento para o instrumento General MIDI 
@@ -134,7 +135,7 @@ export class EvenDigitRule {
   }
 }
 
-export class OctaveUpRule {
+export class OctaveUpRule extends TextRule {
   matches(character) {
     return character === '?' || character === '.';
   }
@@ -145,7 +146,7 @@ export class OctaveUpRule {
   }
 }
 
-export class OctaveDownRule {
+export class OctaveDownRule extends TextRule {
   matches(character) {
     return character === 'V';
   }
@@ -156,7 +157,7 @@ export class OctaveDownRule {
   }
 }
 
-export class TubularBellsRule {
+export class TubularBellsRule extends TextRule {
   matches(character) {
     return character === ';' || /^[13579]$/.test(character);
     //caractere ; ou dígito ímpar: 
@@ -169,7 +170,7 @@ export class TubularBellsRule {
   }
 }
 
-export class ChurchOrganRule {
+export class ChurchOrganRule extends TextRule {
   matches(character) {
     return character === ',';
   }
@@ -180,7 +181,7 @@ export class ChurchOrganRule {
   }
 }
 
-export class BpmUpRule {
+export class BpmUpRule extends TextRule {
   matches(character) {
     return character === '>';
   }
@@ -191,7 +192,7 @@ export class BpmUpRule {
   }
 }
 
-export class BpmDownRule {
+export class BpmDownRule extends TextRule {
   matches(character) {
     return character === '<';
   }
@@ -202,7 +203,7 @@ export class BpmDownRule {
   }
 }
 
-export class RepeatOrRestRule {
+export class RepeatOrRestRule extends TextRule {
   matches() {
     return true;
   }
