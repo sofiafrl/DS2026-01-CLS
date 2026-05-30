@@ -1,94 +1,44 @@
-import { MusicEvent } from './MusicEvent.js';
+import { DEFAULT_EVENT_EMITTER, hasNote } from './MusicEventEmitter.js';
+import { TextRule } from './TextRule.js';
 
-const NOTE_TO_SEMITONE = {
-  C: 0,
-  D: 2,
-  E: 4,
-  F: 5,
-  G: 7,
-  A: 9,
-  H: 10,
-  B: 11
-};
-
-function toMidi(note, octave) {
-  return 12 * (octave + 1) + NOTE_TO_SEMITONE[note];
-}
-
-function emitNote(context, note) {
-  const event = new MusicEvent({
-    type: 'note',
-    voice: context.voiceIndex,
-    beat: context.beat,
-    duration: 1,
-    note,
-    octave: context.octave,
-    midi: toMidi(note, context.octave),
-    volume: context.volume,
-    instrument: context.instrument,
-    bpm: context.bpm
-  });
-
-  context.addEvent(event);
-  context.lastNote = note;
-  context.lastProcessedWasNote = true;
-  context.advance();
-}
-
-function emitRest(context) {
-  context.addEvent(new MusicEvent({
-    type: 'rest',
-    voice: context.voiceIndex,
-    beat: context.beat,
-    duration: 1,
-    volume: context.volume,
-    instrument: context.instrument,
-    bpm: context.bpm
-  }));
-  context.lastProcessedWasNote = false;
-  context.advance();
-}
-
-function repeatLastNoteOrRest(context) {
-  if (context.lastProcessedWasNote && context.lastNote) {
-    emitNote(context, context.lastNote);
-    return;
+export class NoteRule extends TextRule {
+  constructor(eventEmitter = DEFAULT_EVENT_EMITTER) {
+    super();
+    this.eventEmitter = eventEmitter;
   }
 
-  emitRest(context);
-}
-
-export class NoteRule {
   matches(character, nextCharacter) {
-    return Object.prototype.hasOwnProperty.call(NOTE_TO_SEMITONE, character) || (character === 'M' && nextCharacter === 'b');
+    return hasNote(character) || (character === 'M' && nextCharacter === 'b');
   }
 
   apply(character, context) {
     if (character === 'M') {
-      emitNote(context, 'E');
-      const lastEvent = context.events.at(-1);
-      lastEvent.note = 'Mb';
-      lastEvent.midi -= 1;
+      this.eventEmitter.emitFlatMi(context);
       return 2;
     }
 
-    emitNote(context, character);
+    this.eventEmitter.emitNote(context, character);
     return 1;
   }
 }
 
-export class LowercaseRestRule {
+export class LowercaseRestRule extends TextRule {
+  constructor(eventEmitter = DEFAULT_EVENT_EMITTER) {
+    super();
+    this.eventEmitter = eventEmitter;
+  }
+
   matches(character) {
     return /^[a-h]$/.test(character);
   }
 
   apply(_character, context) {
-    emitRest(context);
+    this.eventEmitter.emitRest(context);
     return 1;
   }
 }
 
-export class SpaceVolumeRule {
+export class SpaceVolumeRule extends TextRule {
   matches(character) {
     return character === ' ';
   }
@@ -99,7 +49,7 @@ export class SpaceVolumeRule {
   }
 }
 
-export class HarmonicaRule {
+export class HarmonicaRule extends TextRule {
   matches(character) {
     return character === '!';
   }
@@ -110,7 +60,7 @@ export class HarmonicaRule {
   }
 }
 
-export class BagpipeVowelRule {
+export class BagpipeVowelRule extends TextRule {
   matches(character) {
     return /^[OoIiUu]$/.test(character);
   }
@@ -121,7 +71,7 @@ export class BagpipeVowelRule {
   }
 }
 
-export class EvenDigitRule {
+export class EvenDigitRule extends TextRule {
   matches(character) {
     return /^[02468]$/.test(character); 
     //dígito par: trocar instrumento para o instrumento General MIDI 
@@ -134,7 +84,7 @@ export class EvenDigitRule {
   }
 }
 
-export class OctaveUpRule {
+export class OctaveUpRule extends TextRule {
   matches(character) {
     return character === '?' || character === '.';
   }
@@ -145,7 +95,7 @@ export class OctaveUpRule {
   }
 }
 
-export class OctaveDownRule {
+export class OctaveDownRule extends TextRule {
   matches(character) {
     return character === 'V';
   }
@@ -156,7 +106,7 @@ export class OctaveDownRule {
   }
 }
 
-export class TubularBellsRule {
+export class TubularBellsRule extends TextRule {
   matches(character) {
     return character === ';' || /^[13579]$/.test(character);
     //caractere ; ou dígito ímpar: 
@@ -169,7 +119,7 @@ export class TubularBellsRule {
   }
 }
 
-export class ChurchOrganRule {
+export class ChurchOrganRule extends TextRule {
   matches(character) {
     return character === ',';
   }
@@ -180,7 +130,7 @@ export class ChurchOrganRule {
   }
 }
 
-export class BpmUpRule {
+export class BpmUpRule extends TextRule {
   matches(character) {
     return character === '>';
   }
@@ -191,7 +141,7 @@ export class BpmUpRule {
   }
 }
 
-export class BpmDownRule {
+export class BpmDownRule extends TextRule {
   matches(character) {
     return character === '<';
   }
@@ -202,13 +152,18 @@ export class BpmDownRule {
   }
 }
 
-export class RepeatOrRestRule {
+export class RepeatOrRestRule extends TextRule {
+  constructor(eventEmitter = DEFAULT_EVENT_EMITTER) {
+    super();
+    this.eventEmitter = eventEmitter;
+  }
+
   matches() {
     return true;
   }
 
   apply(_character, context) {
-    repeatLastNoteOrRest(context);
+    this.eventEmitter.repeatLastNoteOrRest(context);
     return 1;
   }
 }
