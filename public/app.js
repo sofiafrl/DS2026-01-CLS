@@ -105,9 +105,8 @@ function schedulePiece(piece) {
     for (const event of voice.events) {
       if (event.type !== 'note') continue;
 
-      const secondsPerBeat = 60 / event.bpm;
-      const start = startAt + event.beat * secondsPerBeat;
-      const duration = event.duration * secondsPerBeat * 0.92;
+      const start = startAt + event.startSeconds;
+      const duration = event.durationSeconds * 0.92;
       const oscillator = state.audioContext.createOscillator();
       const gain = state.audioContext.createGain();
 

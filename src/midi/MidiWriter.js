@@ -34,8 +34,10 @@ function secondsToTicks(seconds, ticksPerQuarter = 480, bpm = 120) {
 }
 
 function eventToMidiMessages(event, channel, ticksPerQuarter) {
-  const startSeconds = event.beat * (60 / event.bpm);
-  const durationSeconds = event.duration * (60 / event.bpm);
+  // The interpreter already accumulates tempo changes into absolute seconds.
+  // MIDI conversion only maps that shared timeline to ticks.
+  const startSeconds = event.startSeconds;
+  const durationSeconds = event.durationSeconds;
   const startTick = secondsToTicks(startSeconds, ticksPerQuarter, 120);
   const endTick = secondsToTicks(startSeconds + durationSeconds, ticksPerQuarter, 120);
 

@@ -6,6 +6,8 @@ export class VoiceContext {
 
     this.voiceIndex = voiceIndex;
     this.beat = delayBeats;
+    // Initial delay is measured with the initial BPM before any local tempo command is processed.
+    this.timeSeconds = delayBeats * (60 / initialBpm);
     this.bpm = initialBpm;
     this.baseOctave = initialOctave ?? profile.baseOctave;
     this.octave = this.baseOctave;
@@ -23,7 +25,12 @@ export class VoiceContext {
   }
 
   advance(duration = 1) {
+    this.timeSeconds += this.durationSeconds(duration);
     this.beat += duration;
+  }
+
+  durationSeconds(duration = 1) {
+    return duration * (60 / this.bpm);
   }
 
   setInstrument(program) {
