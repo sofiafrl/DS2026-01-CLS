@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { MusicInterpreter } from '../src/core/MusicInterpreter.js';
 import { MidiWriter } from '../src/midi/MidiWriter.js';
+import { MusicEventEmitter, hasNote, toMidi } from '../src/core/MusicEventEmitter.js';
 import { TextRule, assertTextRule } from '../src/core/TextRule.js';
+import { VoiceContext } from '../src/core/VoiceContext.js';
 
 const interpreter = new MusicInterpreter();
 
@@ -21,6 +23,21 @@ assert.throws(
   () => assertTextRule({ matches() {}, apply() {} }),
   /Every text rule must extend TextRule and implement matches\(\) and apply\(\)\./
 );
+
+assert.equal(hasNote('C'), true);
+assert.equal(hasNote('Z'), false);
+assert.equal(toMidi('C', 4), 60);
+
+const eventEmitter = new MusicEventEmitter();
+const eventContext = new VoiceContext({ voiceIndex: 0 });
+eventEmitter.emitNote(eventContext, 'C');
+assert.equal(eventContext.events[0].type, 'note');
+assert.equal(eventContext.events[0].midi, 84);
+assert.equal(eventContext.beat, 1);
+
+eventEmitter.emitRest(eventContext);
+assert.equal(eventContext.events[1].type, 'rest');
+assert.equal(eventContext.beat, 2);
 
 const piece = interpreter.interpret('[0] C D E F\n[4] G A B C', { bpm: 120, volume: 100, instrument: 6, octave: 6 });
 assert.equal(piece.metadata.voiceCount, 2);
