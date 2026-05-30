@@ -19,15 +19,20 @@ export function toMidi(note, octave) {
   return 12 * (octave + 1) + NOTE_TO_SEMITONE[note];
 }
 
+const DEFAULT_EVENT_DURATION = 1;
+
 export class MusicEventEmitter {
   // Rules delegate event creation here so text mapping stays separate from
   // the internal MusicEvent shape.
   emitNote(context, note) {
+    const duration = DEFAULT_EVENT_DURATION;
     const event = new MusicEvent({
       type: 'note',
       voice: context.voiceIndex,
       beat: context.beat,
-      duration: 1,
+      duration,
+      startSeconds: context.timeSeconds,
+      durationSeconds: context.durationSeconds(duration),
       note,
       octave: context.octave,
       midi: toMidi(note, context.octave),
@@ -54,11 +59,14 @@ export class MusicEventEmitter {
   }
 
   emitRest(context) {
+    const duration = DEFAULT_EVENT_DURATION;
     context.addEvent(new MusicEvent({
       type: 'rest',
       voice: context.voiceIndex,
       beat: context.beat,
-      duration: 1,
+      duration,
+      startSeconds: context.timeSeconds,
+      durationSeconds: context.durationSeconds(duration),
       volume: context.volume,
       instrument: context.instrument,
       bpm: context.bpm

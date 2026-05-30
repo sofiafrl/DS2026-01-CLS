@@ -33,10 +33,14 @@ const eventContext = new VoiceContext({ voiceIndex: 0 });
 eventEmitter.emitNote(eventContext, 'C');
 assert.equal(eventContext.events[0].type, 'note');
 assert.equal(eventContext.events[0].midi, 84);
+assert.equal(eventContext.events[0].startSeconds, 0);
+assert.equal(eventContext.events[0].durationSeconds, 0.5);
 assert.equal(eventContext.beat, 1);
 
 eventEmitter.emitRest(eventContext);
 assert.equal(eventContext.events[1].type, 'rest');
+assert.equal(eventContext.events[1].startSeconds, 0.5);
+assert.equal(eventContext.events[1].durationSeconds, 0.5);
 assert.equal(eventContext.beat, 2);
 
 const piece = interpreter.interpret('[0] C D E F\n[4] G A B C', { bpm: 120, volume: 100, instrument: 6, octave: 6 });
@@ -61,6 +65,13 @@ assert.equal(notes[0].octave, 5);
 assert.equal(notes[1].octave, 6);
 assert.equal(notes[2].octave, 5);
 assert.equal(notes[3].bpm, 130);
+
+const variableTempo = interpreter.interpret('[0] C>D', { bpm: 150 });
+const variableTempoNotes = variableTempo.voices[0].events.filter((event) => event.type === 'note');
+assert.equal(variableTempoNotes[0].startSeconds, 0);
+assert.equal(variableTempoNotes[0].durationSeconds, 0.4);
+assert.equal(variableTempoNotes[1].startSeconds, 0.4);
+assert.equal(variableTempoNotes[1].durationSeconds, 0.375);
 
 const mb = interpreter.interpret('[0] Mb', { bpm: 120, volume: 80, instrument: 0, octave: 4 });
 const mbNote = mb.voices[0].events.find((event) => event.type === 'note');
