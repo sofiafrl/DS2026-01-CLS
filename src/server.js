@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { MusicInterpreter } from './core/MusicInterpreter.js';
 import { MidiWriter } from './midi/MidiWriter.js';
 import { GENERAL_MIDI_INSTRUMENTS } from './core/InstrumentCatalog.js';
+import { InputValidationError, validateInterpretRequest } from './core/InputValidator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,20 +22,37 @@ app.get('/api/instruments', (_request, response) => {
   response.json(GENERAL_MIDI_INSTRUMENTS.map((name, program) => ({ program, name })));
 });
 
+function sendApiError(response, error) {
+  if (error instanceof InputValidationError) {
+    response.status(400).json({ errors: error.errors });
+    return;
+  }
+
+  response.status(500).json({ error: 'Internal server error.' });
+}
+
 app.post('/api/interpret', (request, response) => {
-  const { text, options } = request.body ?? {};
-  const piece = interpreter.interpret(text, options);
-  response.json(piece);
+  try {
+    const { text, options } = validateInterpretRequest(request.body);
+    const piece = interpreter.interpret(text, options);
+    response.json(piece);
+  } catch (error) {
+    sendApiError(response, error);
+  }
 });
 
 app.post('/api/midi', (request, response) => {
-  const { text, options } = request.body ?? {};
-  const piece = interpreter.interpret(text, options);
-  const midi = midiWriter.write(piece);
+  try {
+    const { text, options } = validateInterpretRequest(request.body);
+    const piece = interpreter.interpret(text, options);
+    const midi = midiWriter.write(piece);
 
-  response.setHeader('Content-Type', 'audio/midi');
-  response.setHeader('Content-Disposition', 'attachment; filename="gerador-musical.mid"');
-  response.send(midi);
+    response.setHeader('Content-Type', 'audio/midi');
+    response.setHeader('Content-Disposition', 'attachment; filename="gerador-musical.mid"');
+    response.send(midi);
+  } catch (error) {
+    sendApiError(response, error);
+  }
 });
 
 app.listen(port, () => {
