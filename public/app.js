@@ -86,6 +86,8 @@ function setExample() {
 }
 
 async function playMusic() {
+  if (audioPlayer.isCurrentlyPlaying()) return;
+
   if (audioPlayer.canResume()) {
     audioPlayer.play();
     return;

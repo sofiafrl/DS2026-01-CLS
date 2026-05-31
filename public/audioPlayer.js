@@ -24,6 +24,10 @@ export class AudioPlayer {
     return Boolean(this.currentPiece && !this.isPlaying && this.pausedAtSeconds > 0);
   }
 
+  isCurrentlyPlaying() {
+    return this.isPlaying;
+  }
+
   play(piece = this.currentPiece) {
     if (!piece) return;
 
