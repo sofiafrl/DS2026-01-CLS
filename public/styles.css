@@ -173,21 +173,22 @@ select {
 }
 
 .player-card {
-  width: min(430px, 100%);
+  width: min(560px, 100%);
   min-height: 84px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 34px;
+  gap: 14px;
   padding: 20px;
 }
 
 .primary-button {
-  min-width: 118px;
+  min-width: 104px;
   padding: 10px 18px;
   background: var(--surface-soft);
   color: #111111;
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .primary-button:hover,
