@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { MusicInterpreter } from '../src/core/MusicInterpreter.js';
 import { MidiWriter } from '../src/midi/MidiWriter.js';
 import { MusicEventEmitter, hasNote, toMidi } from '../src/core/MusicEventEmitter.js';
+import { InputValidationError, validateInterpretRequest } from '../src/core/InputValidator.js';
 import { TextRule, assertTextRule } from '../src/core/TextRule.js';
 import { VoiceContext } from '../src/core/VoiceContext.js';
 
@@ -22,6 +23,21 @@ assert.throws(() => new TextRule(), /TextRule is abstract/);
 assert.throws(
   () => assertTextRule({ matches() {}, apply() {} }),
   /Every text rule must extend TextRule and implement matches\(\) and apply\(\)\./
+);
+
+const validInput = validateInterpretRequest({
+  text: '[0] C>D',
+  options: { bpm: 150, volume: 100, octave: 6, instrument: 24 }
+});
+assert.equal(validInput.text, '[0] C>D');
+assert.equal(validInput.options.bpm, 150);
+assert.throws(
+  () => validateInterpretRequest({ text: 123, options: { bpm: 10, volume: 200, octave: 10, instrument: 128 } }),
+  InputValidationError
+);
+assert.throws(
+  () => validateInterpretRequest({ text: 'C', options: 'invalid' }),
+  InputValidationError
 );
 
 assert.equal(hasNote('C'), true);
