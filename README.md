@@ -2,6 +2,12 @@
 
 Protótipo desenvolvido em **HTML/CSS/JavaScript no front** e **JavaScript/Node.js no back**, baseado nas fases do trabalho prático.
 
+## Interface oficial
+
+A interface oficial do protótipo fica na pasta `public/` e é servida pelo backend Express em `src/server.js`.
+
+Os arquivos Svelte que ainda existirem no repositório não fazem parte do fluxo principal executado por `npm start`. Eles devem ser tratados como protótipo paralelo/legado até uma decisão futura de remoção ou migração completa.
+
 ## O que foi implementado
 
 - Campo de texto principal seguindo o design enviado.
@@ -53,7 +59,11 @@ npm test
 public/
   index.html       Front em HTML
   styles.css       Estilo inspirado no design enviado
-  app.js           Lógica do front e reprodução Web Audio
+  app.js           Coordenação da interface
+  apiClient.js     Chamadas para a API HTTP
+  audioPlayer.js   Reprodução Web Audio
+  fileService.js   Leitura e download de arquivos
+  pieceRenderer.js Renderização dos eventos musicais
 src/
   server.js        Backend Express
   core/            Regras, parser e interpretador musical
