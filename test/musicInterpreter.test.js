@@ -8,6 +8,14 @@ import { VoiceContext } from '../src/core/VoiceContext.js';
 
 const interpreter = new MusicInterpreter();
 
+function firstVoiceEvents(text, options = {}) {
+  return interpreter.interpret(text, options).voices[0].events;
+}
+
+function firstNote(text, options = {}) {
+  return firstVoiceEvents(text, options).find((event) => event.type === 'note');
+}
+
 class TestRule extends TextRule {
   matches(_character, _nextCharacter, _context) {
     return true;
@@ -63,6 +71,7 @@ const piece = interpreter.interpret('[0] C D E F\n[4] G A B C', { bpm: 120, volu
 assert.equal(piece.metadata.voiceCount, 2);
 assert.equal(piece.voices[0].events.find((event) => event.type === 'note').note, 'C');
 assert.equal(piece.voices[1].events.find((event) => event.type === 'note').beat, 4);
+assert.equal(piece.voices[1].events.find((event) => event.type === 'note').startSeconds, 2);
 
 const voiceProfiles = interpreter.interpret('[0] C\n[0] C\n[0] C\n[0] C\n[0] C');
 assert.equal(voiceProfiles.voices[0].baseOctave, 6);
@@ -88,6 +97,34 @@ assert.equal(variableTempoNotes[0].startSeconds, 0);
 assert.equal(variableTempoNotes[0].durationSeconds, 0.4);
 assert.equal(variableTempoNotes[1].startSeconds, 0.4);
 assert.equal(variableTempoNotes[1].durationSeconds, 0.375);
+
+const lowercaseRest = firstVoiceEvents('[0] a');
+assert.equal(lowercaseRest[0].type, 'rest');
+assert.equal(lowercaseRest[0].beat, 0);
+
+const volumeDoubling = firstVoiceEvents('[0] C C C', { bpm: 120, volume: 70, instrument: 0, octave: 5 })
+  .filter((event) => event.type === 'note');
+assert.equal(volumeDoubling[0].volume, 70);
+assert.equal(volumeDoubling[1].volume, 127);
+assert.equal(volumeDoubling[2].volume, 127);
+
+assert.equal(firstNote('[0] !C', { instrument: 0 }).instrument, 22);
+assert.equal(firstNote('[0] OC', { instrument: 0 }).instrument, 109);
+assert.equal(firstNote('[0] 2C', { instrument: 10 }).instrument, 12);
+assert.equal(firstNote('[0] ;C', { instrument: 0 }).instrument, 14);
+assert.equal(firstNote('[0] 1C', { instrument: 0 }).instrument, 14);
+assert.equal(firstNote('[0] ,C', { instrument: 0 }).instrument, 19);
+assert.equal(firstNote('[0] 8C', { instrument: 124 }).instrument, 127);
+
+const repeatedUnknown = firstVoiceEvents('[0] CZ').filter((event) => event.type === 'note');
+assert.equal(repeatedUnknown.length, 2);
+assert.equal(repeatedUnknown[1].note, 'C');
+assert.equal(repeatedUnknown[1].beat, 1);
+
+const fallbackRest = firstVoiceEvents('[0] Z');
+assert.equal(fallbackRest[0].type, 'rest');
+
+assert.equal(firstNote('[0] <<<<<<C', { bpm: 50 }).bpm, 20);
 
 const mb = interpreter.interpret('[0] Mb', { bpm: 120, volume: 80, instrument: 0, octave: 4 });
 const mbNote = mb.voices[0].events.find((event) => event.type === 'note');
