@@ -23,7 +23,8 @@ const elements = {
   octaveValue: document.querySelector('#octaveValue'),
   instrumentInput: document.querySelector('#instrumentInput'),
   playButton: document.querySelector('#playButton'),
-  stopButton: document.querySelector('#stopButton'),
+  pauseButton: document.querySelector('#pauseButton'),
+  restartButton: document.querySelector('#restartButton'),
   downloadMidiButton: document.querySelector('#downloadMidiButton'),
   summary: document.querySelector('#summary'),
   eventsOutput: document.querySelector('#eventsOutput')
@@ -84,8 +85,23 @@ function setExample() {
   updateLabels();
 }
 
-elements.playButton.addEventListener('click', async () => audioPlayer.play(await interpret()));
-elements.stopButton.addEventListener('click', () => audioPlayer.stop());
+async function playMusic() {
+  if (audioPlayer.canResume()) {
+    audioPlayer.play();
+    return;
+  }
+
+  audioPlayer.play(await interpret());
+}
+
+async function restartMusic() {
+  const piece = state.lastPiece ?? await interpret();
+  audioPlayer.restart(piece);
+}
+
+elements.playButton.addEventListener('click', playMusic);
+elements.pauseButton.addEventListener('click', () => audioPlayer.pause());
+elements.restartButton.addEventListener('click', restartMusic);
 elements.downloadMidiButton.addEventListener('click', downloadMidi);
 elements.saveTextButton.addEventListener('click', saveText);
 elements.exampleButton.addEventListener('click', setExample);
