@@ -1,2 +1,5 @@
 # ignorar commit de formatação no blame
 644bb69a270e8366fbb408d487af32f843662a75
+
+# ignorar commit de migração para TypeScript no blame
+3fbe723544a2b04b45d6fb80eeffeb934927f4a9
