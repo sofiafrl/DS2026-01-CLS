@@ -1,4 +1,4 @@
-import { fetchInstruments, fetchMidi, interpretText } from './apiClient.js';
+import { fetchInstruments, fetchMidi, interpretText } from './musicService.js';
 import { AudioPlayer } from './audioPlayer.js';
 import { downloadBlob, downloadText, readTextFile } from './fileService.js';
 import { renderPiece } from './pieceRenderer.js';

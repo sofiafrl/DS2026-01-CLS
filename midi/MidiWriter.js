@@ -21,11 +21,11 @@ function intToBytes(value, length) {
 }
 
 function textToBytes(text) {
-  return Array.from(Buffer.from(text, 'utf8'));
+  return Array.from(new TextEncoder().encode(text));
 }
 
 function createChunk(name, data) {
-  return Buffer.from([...textToBytes(name), ...intToBytes(data.length, 4), ...data]);
+  return new Uint8Array([...textToBytes(name), ...intToBytes(data.length, 4), ...data]);
 }
 
 function secondsToTicks(seconds, ticksPerQuarter = 480, bpm = 120) {
@@ -87,6 +87,9 @@ export class MidiWriter {
     trackData.push(0x00, 0xff, 0x2f, 0x00);
     const track = createChunk('MTrk', trackData);
 
-    return Buffer.concat([header, track]);
+    const result = new Uint8Array(header.length + track.length);
+    result.set(header);
+    result.set(track, header.length);
+    return result;
   }
 }

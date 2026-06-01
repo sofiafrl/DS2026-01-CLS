@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import { MusicInterpreter } from '../src/core/MusicInterpreter.js';
-import { MidiWriter } from '../src/midi/MidiWriter.js';
-import { MusicEventEmitter, hasNote, toMidi } from '../src/core/MusicEventEmitter.js';
-import { InputValidationError, validateInterpretRequest } from '../src/core/InputValidator.js';
-import { TextRule, assertTextRule } from '../src/core/TextRule.js';
-import { VoiceContext } from '../src/core/VoiceContext.js';
+import { MusicInterpreter } from '../core/MusicInterpreter.js';
+import { MidiWriter } from '../midi/MidiWriter.js';
+import { MusicEventEmitter, hasNote, toMidi } from '../core/MusicEventEmitter.js';
+import { InputValidationError, validateInterpretRequest } from '../core/InputValidator.js';
+import { TextRule, assertTextRule } from '../core/TextRule.js';
+import { VoiceContext } from '../core/VoiceContext.js';
 
 const interpreter = new MusicInterpreter();
 
@@ -132,7 +132,7 @@ assert.equal(mbNote.note, 'Mb');
 assert.equal(mbNote.midi, 63);
 
 const midi = new MidiWriter().write(piece);
-assert.equal(midi.subarray(0, 4).toString(), 'MThd');
+assert.equal(new TextDecoder().decode(midi.subarray(0, 4)), 'MThd');
 assert.ok(midi.length > 30);
 
 console.log('Todos os testes passaram.');

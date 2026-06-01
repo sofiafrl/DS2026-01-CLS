@@ -1,10 +1,10 @@
 # Gerador Musical a partir de Texto
 
-Protótipo desenvolvido em **HTML/CSS/JavaScript no front** e **JavaScript/Node.js no back**, baseado nas fases do trabalho prático.
+Protótipo desenvolvido inteiramente em **HTML/CSS/JavaScript no front-end**, rodando diretamente no navegador.
 
 ## Interface oficial
 
-A interface oficial do protótipo fica na pasta `public/` e é servida pelo backend Express em `src/server.js`.
+A interface oficial do protótipo é o arquivo `index.html` localizado na raiz do projeto. Opcionalmente, pode ser servido localmente utilizando o script de desenvolvimento incluso.
 
 Os arquivos Svelte que ainda existirem no repositório não fazem parte do fluxo principal executado por `npm start`. Eles devem ser tratados como protótipo paralelo/legado até uma decisão futura de remoção ou migração completa.
 
@@ -16,7 +16,7 @@ Os arquivos Svelte que ainda existirem no repositório não fazem parte do fluxo
 - Interpretação caractere por caractere.
 - Geração de eventos musicais por voz.
 - Reprodução sonora no navegador usando Web Audio API.
-- Geração e download de arquivo `.mid` pelo backend.
+- Geração e download de arquivo `.mid` diretamente no frontend.
 - Configuração de BPM, volume, oitava e instrumento inicial.
 - Suporte à fuga simples da Fase 2:
   - cada linha vira uma voz;
@@ -29,7 +29,6 @@ Os arquivos Svelte que ainda existirem no repositório não fazem parte do fluxo
 ## Como rodar
 
 ```bash
-npm install
 npm start
 ```
 
@@ -56,18 +55,16 @@ npm test
 ## Estrutura
 
 ```text
-public/
-  index.html       Front em HTML
-  styles.css       Estilo inspirado no design enviado
-  app.js           Coordenação da interface
-  apiClient.js     Chamadas para a API HTTP
-  audioPlayer.js   Reprodução Web Audio
-  fileService.js   Leitura e download de arquivos
-  pieceRenderer.js Renderização dos eventos musicais
-src/
-  server.js        Backend Express
-  core/            Regras, parser e interpretador musical
-  midi/            Escritor MIDI em JavaScript puro
+index.html       Front em HTML (na raiz do projeto)
+styles.css       Estilo da interface
+app.js           Coordenação da interface
+musicService.js  Integração local no frontend (chama o interpretador)
+audioPlayer.js   Reprodução Web Audio
+fileService.js   Leitura e download de arquivos
+pieceRenderer.js Renderização dos eventos musicais
+core/            Regras, parser e interpretador musical (JS puro)
+midi/            Escritor MIDI em JavaScript puro
+server.js        Servidor estático de desenvolvimento (zero dependências, opcional)
 test/
   musicInterpreter.test.js
 ```
