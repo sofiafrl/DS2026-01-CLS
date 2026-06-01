@@ -3,24 +3,28 @@ import { VoiceContext } from './VoiceContext.js';
 import { DEFAULT_RULES } from './Rules.js';
 import { getInstrumentName } from './InstrumentCatalog.js';
 import { DEFAULT_MUSIC_OPTIONS } from './MusicDefaults.js';
-import { assertTextRule } from './TextRule.js';
+import { assertTextRule, TextRule } from './TextRule.js';
+import { MusicPiece, MusicVoice, PlaybackOptions } from './types.js';
 
 export class MusicInterpreter {
-	constructor({ parser = new TextParser(), rules = DEFAULT_RULES } = {}) {
+	private parser: TextParser;
+	private rules: TextRule[];
+
+	constructor({ parser = new TextParser(), rules = DEFAULT_RULES }: { parser?: TextParser; rules?: TextRule[] } = {}) {
 		this.parser = parser;
 		// Validate rule objects once so the interpretation loop can stay focused
 		// on orchestration and polymorphic dispatch.
 		this.rules = rules.map(assertTextRule);
 	}
 
-	interpret(text, options = {}) {
+	interpret(text: string, options: PlaybackOptions = {}): MusicPiece {
 		const initialBpm = Number(options.bpm ?? DEFAULT_MUSIC_OPTIONS.bpm);
 		const initialVolume = options.volume !== undefined ? Number(options.volume) : undefined;
 		const initialInstrument =
 			options.instrument !== undefined ? Number(options.instrument) : undefined;
 		const initialOctave = options.octave !== undefined ? Number(options.octave) : undefined;
 
-		const voices = this.parser.parse(text).map((line) => {
+		const voices: MusicVoice[] = this.parser.parse(text).map((line) => {
 			const context = new VoiceContext({
 				voiceIndex: line.index,
 				delayBeats: line.delayBeats,
@@ -55,7 +59,7 @@ export class MusicInterpreter {
 		};
 	}
 
-	processLine(line, context) {
+	processLine(line: string, context: VoiceContext) {
 		let cursor = 0;
 
 		while (cursor < line.length) {
@@ -64,7 +68,7 @@ export class MusicInterpreter {
 			const rule = this.rules.find((candidate) =>
 				candidate.matches(character, nextCharacter, context)
 			);
-			cursor += rule.apply(character, context, nextCharacter);
+			cursor += rule!.apply(character, context, nextCharacter);
 		}
 	}
 }

@@ -1,4 +1,10 @@
-export function renderPiece(summaryElement, eventsOutputElement, piece) {
+import { MusicPiece } from './core/types.js';
+
+export function renderPiece(
+	summaryElement: HTMLElement,
+	eventsOutputElement: HTMLElement,
+	piece: MusicPiece
+) {
 	summaryElement.textContent = `${piece.metadata.voiceCount} voz(es), ${piece.metadata.eventCount} evento(s), BPM inicial ${piece.metadata.initialBpm}.`;
 
 	eventsOutputElement.innerHTML = piece.voices

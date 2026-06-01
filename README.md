@@ -1,10 +1,10 @@
 # Gerador Musical a partir de Texto
 
-Protótipo desenvolvido inteiramente em **HTML/CSS/JavaScript no front-end**, rodando diretamente no navegador.
+Protótipo desenvolvido inteiramente em **HTML/CSS/TypeScript no front-end**, rodando diretamente no navegador.
 
 ## Interface oficial
 
-A interface oficial do protótipo é o arquivo `index.html` localizado na pasta `src/` do projeto. Ele é servido localmente utilizando o script de desenvolvimento incluso na raiz do projeto.
+A interface oficial do protótipo é o arquivo `index.html` localizado na raiz do projeto. Ele é servido localmente utilizando o script de desenvolvimento incluso na raiz do projeto.
 
 Os arquivos Svelte que ainda existirem no repositório não fazem parte do fluxo principal executado por `npm start`. Eles devem ser tratados como protótipo paralelo/legado até uma decisão futura de remoção ou migração completa.
 
@@ -35,7 +35,7 @@ npm start
 Depois acesse:
 
 ```text
-http://localhost:3000
+http://localhost:5173
 ```
 
 ## Como testar
@@ -55,19 +55,19 @@ npm test
 ## Estrutura
 
 ```text
+index.html       Front em HTML (interface gráfica)
+tsconfig.json    Configuração do TypeScript
 src/
-  index.html       Front em HTML (interface gráfica)
   styles.css       Estilo da interface
-  app.js           Coordenação da interface
-  musicService.js  Integração local no frontend (chama o interpretador)
-  AudioPlayer.js   Reprodução Web Audio
-  fileService.js   Leitura e download de arquivos
-  pieceRenderer.js Renderização dos eventos musicais
-  core/            Regras, parser e interpretador musical (JS puro)
-  midi/            Escritor MIDI em JavaScript puro
-server.js        Servidor estático de desenvolvimento (zero dependências)
+  app.ts           Coordenação da interface
+  musicService.ts  Integração local no frontend (chama o interpretador)
+  AudioPlayer.ts   Reprodução Web Audio
+  fileService.ts   Leitura e download de arquivos
+  pieceRenderer.ts Renderização dos eventos musicais
+  core/            Regras, parser e interpretador musical (TypeScript)
+  midi/            Escritor MIDI em TypeScript
 test/
-  musicInterpreter.test.js
+  musicInterpreter.test.ts
 ```
 
 ## Observações técnicas

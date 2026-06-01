@@ -2,35 +2,40 @@ import { getInstruments, generateMidi, interpretText } from './musicService.js';
 import { AudioPlayer } from './AudioPlayer.js';
 import { downloadBlob, downloadText, readTextFile } from './fileService.js';
 import { renderPiece } from './pieceRenderer.js';
+import { MusicPiece, PlaybackOptions } from './core/types.js';
 
-const state = {
+interface AppState {
+	lastPiece: MusicPiece | null;
+}
+
+const state: AppState = {
 	lastPiece: null
 };
 
 const audioPlayer = new AudioPlayer();
 
 const elements = {
-	textInput: document.querySelector('#textInput'),
-	charCount: document.querySelector('#charCount'),
-	fileInput: document.querySelector('#fileInput'),
-	saveTextButton: document.querySelector('#saveTextButton'),
-	exampleButton: document.querySelector('#exampleButton'),
-	bpmInput: document.querySelector('#bpmInput'),
-	bpmValue: document.querySelector('#bpmValue'),
-	volumeInput: document.querySelector('#volumeInput'),
-	volumeValue: document.querySelector('#volumeValue'),
-	octaveInput: document.querySelector('#octaveInput'),
-	octaveValue: document.querySelector('#octaveValue'),
-	instrumentInput: document.querySelector('#instrumentInput'),
-	playButton: document.querySelector('#playButton'),
-	pauseButton: document.querySelector('#pauseButton'),
-	restartButton: document.querySelector('#restartButton'),
-	downloadMidiButton: document.querySelector('#downloadMidiButton'),
-	summary: document.querySelector('#summary'),
-	eventsOutput: document.querySelector('#eventsOutput')
+	textInput: document.querySelector('#textInput') as HTMLTextAreaElement,
+	charCount: document.querySelector('#charCount') as HTMLElement,
+	fileInput: document.querySelector('#fileInput') as HTMLInputElement,
+	saveTextButton: document.querySelector('#saveTextButton') as HTMLButtonElement,
+	exampleButton: document.querySelector('#exampleButton') as HTMLButtonElement,
+	bpmInput: document.querySelector('#bpmInput') as HTMLInputElement,
+	bpmValue: document.querySelector('#bpmValue') as HTMLElement,
+	volumeInput: document.querySelector('#volumeInput') as HTMLInputElement,
+	volumeValue: document.querySelector('#volumeValue') as HTMLElement,
+	octaveInput: document.querySelector('#octaveInput') as HTMLInputElement,
+	octaveValue: document.querySelector('#octaveValue') as HTMLElement,
+	instrumentInput: document.querySelector('#instrumentInput') as HTMLSelectElement,
+	playButton: document.querySelector('#playButton') as HTMLButtonElement,
+	pauseButton: document.querySelector('#pauseButton') as HTMLButtonElement,
+	restartButton: document.querySelector('#restartButton') as HTMLButtonElement,
+	downloadMidiButton: document.querySelector('#downloadMidiButton') as HTMLButtonElement,
+	summary: document.querySelector('#summary') as HTMLElement,
+	eventsOutput: document.querySelector('#eventsOutput') as HTMLElement
 };
 
-function currentOptions() {
+function currentOptions(): PlaybackOptions {
 	return {
 		bpm: Number(elements.bpmInput.value),
 		volume: Number(elements.volumeInput.value),
@@ -56,7 +61,7 @@ function loadInstruments() {
 	elements.instrumentInput.value = '24';
 }
 
-function interpret() {
+function interpret(): MusicPiece {
 	state.lastPiece = interpretText(elements.textInput.value, currentOptions());
 	renderPiece(elements.summary, elements.eventsOutput, state.lastPiece);
 	return state.lastPiece;
@@ -71,7 +76,7 @@ function saveText() {
 	downloadText(elements.textInput.value, 'texto-musical.txt');
 }
 
-async function openTextFile(file) {
+async function openTextFile(file: File) {
 	if (!file) return;
 
 	elements.textInput.value = await readTextFile(file);
@@ -107,7 +112,12 @@ elements.restartButton.addEventListener('click', restartMusic);
 elements.downloadMidiButton.addEventListener('click', downloadMidi);
 elements.saveTextButton.addEventListener('click', saveText);
 elements.exampleButton.addEventListener('click', setExample);
-elements.fileInput.addEventListener('change', (event) => openTextFile(event.target.files[0]));
+elements.fileInput.addEventListener('change', (event) => {
+	const target = event.target as HTMLInputElement;
+	if (target.files && target.files[0]) {
+		openTextFile(target.files[0]);
+	}
+});
 [elements.bpmInput, elements.volumeInput, elements.octaveInput, elements.textInput].forEach(
 	(element) => {
 		element.addEventListener('input', updateLabels);

@@ -1,14 +1,16 @@
-function midiToFrequency(midi) {
+import { MusicEvent, MusicPiece } from './core/types.js';
+
+function midiToFrequency(midi: number): number {
 	return 440 * 2 ** ((midi - 69) / 12);
 }
 
 const WAVEFORM_INSTRUMENTS = {
 	triangle: [6, 20, 19, 70, 71], // Harpsichord, organs, woodwinds
-	square: [22, 109, 110, 114], // Accordion, bagpipe, kalimba, tinkle bell
+	square: [22, 109, 110, 114],   // Accordion, bagpipe, kalimba, tinkle bell
 	sawtooth: [24, 25, 26, 27, 28, 29, 30, 31] // Guitars
 };
 
-function waveformForInstrument(program) {
+function waveformForInstrument(program: number): 'triangle' | 'square' | 'sawtooth' | 'sine' {
 	if (WAVEFORM_INSTRUMENTS.triangle.includes(program)) return 'triangle';
 	if (WAVEFORM_INSTRUMENTS.square.includes(program)) return 'square';
 	if (WAVEFORM_INSTRUMENTS.sawtooth.includes(program)) return 'sawtooth';
@@ -16,25 +18,23 @@ function waveformForInstrument(program) {
 }
 
 export class AudioPlayer {
-	constructor() {
-		this.audioContext = null;
-		this.scheduledNodes = [];
-		this.currentPiece = null;
-		this.startedAt = 0;
-		this.pausedAtSeconds = 0;
-		this.isPlaying = false;
-		this.finishTimer = null;
-	}
+	private audioContext: AudioContext | null = null;
+	private scheduledNodes: OscillatorNode[] = [];
+	private currentPiece: MusicPiece | null = null;
+	private startedAt = 0;
+	private pausedAtSeconds = 0;
+	private isPlaying = false;
+	private finishTimer: ReturnType<typeof setTimeout> | null = null;
 
-	canResume() {
+	canResume(): boolean {
 		return Boolean(this.currentPiece && !this.isPlaying && this.pausedAtSeconds > 0);
 	}
 
-	isCurrentlyPlaying() {
+	isCurrentlyPlaying(): boolean {
 		return this.isPlaying;
 	}
 
-	play(piece = this.currentPiece) {
+	play(piece: MusicPiece | null = this.currentPiece) {
 		if (!piece) return;
 
 		if (piece !== this.currentPiece) {
@@ -66,7 +66,9 @@ export class AudioPlayer {
 		);
 	}
 
-	scheduleNote(event) {
+	scheduleNote(event: MusicEvent): number {
+		if (!this.audioContext) return 0;
+
 		const audibleDuration = event.durationSeconds * 0.92;
 		const audibleEnd = event.startSeconds + audibleDuration;
 
@@ -82,10 +84,10 @@ export class AudioPlayer {
 		const gain = this.audioContext.createGain();
 		const attackEnd = start + Math.min(0.02, duration * 0.5);
 
-		oscillator.type = waveformForInstrument(event.instrument);
-		oscillator.frequency.value = midiToFrequency(event.midi);
+		oscillator.type = waveformForInstrument(event.instrument!);
+		oscillator.frequency.value = midiToFrequency(event.midi!);
 		gain.gain.setValueAtTime(0.0001, start);
-		gain.gain.exponentialRampToValueAtTime(Math.max(0.002, (event.volume / 127) * 0.18), attackEnd);
+		gain.gain.exponentialRampToValueAtTime(Math.max(0.002, (event.volume! / 127) * 0.18), attackEnd);
 		gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
 
 		oscillator.connect(gain).connect(this.audioContext.destination);
@@ -104,7 +106,7 @@ export class AudioPlayer {
 		this.stopScheduledAudio();
 	}
 
-	restart(piece = this.currentPiece) {
+	restart(piece: MusicPiece | null = this.currentPiece) {
 		this.pausedAtSeconds = 0;
 		this.currentPiece = piece;
 		this.play(piece);

@@ -1,6 +1,19 @@
 import { clampInstrument, clampVolume, getVoiceProfile, MUSIC_LIMITS } from './MusicDefaults.js';
+import { MusicEvent } from './types.js';
 
 export class VoiceContext {
+	public voiceIndex: number;
+	public beat: number;
+	public timeSeconds: number;
+	public bpm: number;
+	public baseOctave: number;
+	public octave: number;
+	public volume: number;
+	public instrument: number;
+	public lastNote: string | null;
+	public lastProcessedWasNote: boolean;
+	public events: MusicEvent[];
+
 	constructor({
 		voiceIndex,
 		delayBeats = 0,
@@ -8,6 +21,13 @@ export class VoiceContext {
 		initialVolume,
 		initialInstrument,
 		initialOctave
+	}: {
+		voiceIndex: number;
+		delayBeats?: number;
+		initialBpm?: number;
+		initialVolume?: number;
+		initialInstrument?: number;
+		initialOctave?: number;
 	}) {
 		const profile = getVoiceProfile(voiceIndex);
 
@@ -27,20 +47,20 @@ export class VoiceContext {
 		this.events = [];
 	}
 
-	addEvent(event) {
+	addEvent(event: MusicEvent) {
 		this.events.push(event);
 	}
 
-	advance(duration = 1) {
+	advance(duration: number = 1) {
 		this.timeSeconds += this.durationSeconds(duration);
 		this.beat += duration;
 	}
 
-	durationSeconds(duration = 1) {
+	durationSeconds(duration: number = 1): number {
 		return duration * (60 / this.bpm);
 	}
 
-	setInstrument(program) {
+	setInstrument(program: number) {
 		this.instrument = clampInstrument(program);
 	}
 
@@ -49,7 +69,6 @@ export class VoiceContext {
 	}
 
 	increaseOctave() {
-		// When octave commands exceed the allowed range, return to the voice base octave.
 		this.octave = this.octave < MUSIC_LIMITS.maxOctave ? this.octave + 1 : this.baseOctave;
 	}
 

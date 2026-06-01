@@ -1,6 +1,8 @@
-function writeVarLength(value) {
+import { MusicEvent, MusicPiece } from '../core/types.js';
+
+function writeVarLength(value: number): number[] {
 	let buffer = value & 0x7f;
-	const bytes = [];
+	const bytes: number[] = [];
 
 	while ((value >>= 7)) {
 		buffer <<= 8;
@@ -16,24 +18,33 @@ function writeVarLength(value) {
 	return bytes;
 }
 
-function intToBytes(value, length) {
+function intToBytes(value: number, length: number): number[] {
 	return Array.from({ length }, (_, index) => (value >> (8 * (length - index - 1))) & 0xff);
 }
 
-function textToBytes(text) {
+function textToBytes(text: string): number[] {
 	return Array.from(new TextEncoder().encode(text));
 }
 
-function createChunk(name, data) {
+function createChunk(name: string, data: number[]): Uint8Array {
 	return new Uint8Array([...textToBytes(name), ...intToBytes(data.length, 4), ...data]);
 }
 
-function secondsToTicks(seconds, ticksPerQuarter = 480, bpm = 120) {
+function secondsToTicks(seconds: number, ticksPerQuarter = 480, bpm = 120): number {
 	const secondsPerBeat = 60 / bpm;
 	return Math.round((seconds / secondsPerBeat) * ticksPerQuarter);
 }
 
-function eventToMidiMessages(event, channel, ticksPerQuarter) {
+interface MidiMessage {
+	tick: number;
+	bytes: number[];
+}
+
+function eventToMidiMessages(
+	event: MusicEvent,
+	channel: number,
+	ticksPerQuarter: number
+): MidiMessage[] {
 	// The interpreter already accumulates tempo changes into absolute seconds.
 	// MIDI conversion only maps that shared timeline to ticks.
 	const startSeconds = event.startSeconds;
@@ -44,28 +55,30 @@ function eventToMidiMessages(event, channel, ticksPerQuarter) {
 	if (event.type !== 'note') return [];
 
 	return [
-		{ tick: startTick, bytes: [0xc0 | channel, event.instrument] },
+		{ tick: startTick, bytes: [0xc0 | channel, event.instrument!] },
 		{
 			tick: startTick,
-			bytes: [0x90 | channel, event.midi, Math.max(1, Math.min(127, Math.round(event.volume)))]
+			bytes: [0x90 | channel, event.midi!, Math.max(1, Math.min(127, Math.round(event.volume!)))]
 		},
-		{ tick: endTick, bytes: [0x80 | channel, event.midi, 0] }
+		{ tick: endTick, bytes: [0x80 | channel, event.midi!, 0] }
 	];
 }
 
 export class MidiWriter {
+	private ticksPerQuarter: number;
+
 	constructor({ ticksPerQuarter = 480 } = {}) {
 		this.ticksPerQuarter = ticksPerQuarter;
 	}
 
-	write(piece) {
+	write(piece: MusicPiece): Uint8Array {
 		const header = createChunk('MThd', [
 			...intToBytes(0, 2),
 			...intToBytes(1, 2),
 			...intToBytes(this.ticksPerQuarter, 2)
 		]);
 
-		const events = [];
+		const events: MidiMessage[] = [];
 		events.push({ tick: 0, bytes: [0xff, 0x51, 0x03, 0x07, 0xa1, 0x20] });
 		events.push({
 			tick: 0,
@@ -82,7 +95,7 @@ export class MidiWriter {
 		events.sort((a, b) => a.tick - b.tick);
 
 		let previousTick = 0;
-		const trackData = [];
+		const trackData: number[] = [];
 
 		for (const event of events) {
 			const delta = Math.max(0, event.tick - previousTick);

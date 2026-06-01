@@ -1,3 +1,5 @@
+import { VoiceContext } from './VoiceContext.js';
+
 export class TextRule {
 	constructor() {
 		if (new.target === TextRule) {
@@ -5,18 +7,16 @@ export class TextRule {
 		}
 	}
 
-	// Concrete rules decide whether they can handle the current parser position.
-	matches(_character, _nextCharacter, _context) {
+	matches(character: string, nextCharacter: string, context: VoiceContext): boolean {
 		throw new Error(`${this.constructor.name} must implement matches().`);
 	}
 
-	// Concrete rules apply their mapping and return how many characters were consumed.
-	apply(_character, _context, _nextCharacter) {
+	apply(character: string, context: VoiceContext, nextCharacter: string): number {
 		throw new Error(`${this.constructor.name} must implement apply().`);
 	}
 }
 
-export function assertTextRule(rule) {
+export function assertTextRule(rule: any): TextRule {
 	const followsTextRuleContract =
 		rule instanceof TextRule &&
 		typeof rule.matches === 'function' &&

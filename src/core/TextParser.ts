@@ -1,5 +1,7 @@
+import { ParseLineResult } from './types.js';
+
 export class TextParser {
-	parse(text) {
+	parse(text: string): ParseLineResult[] {
 		return String(text ?? '')
 			.replaceAll('\r\n', '\n')
 			.split('\n')
@@ -7,7 +9,7 @@ export class TextParser {
 			.filter((voice) => voice.content.length > 0 || voice.delayBeats > 0);
 	}
 
-	parseLine(rawLine, index) {
+	parseLine(rawLine: string, index: number): ParseLineResult {
 		const line = String(rawLine ?? '');
 		const trimmed = line.trimStart();
 
@@ -16,7 +18,8 @@ export class TextParser {
 			if (closingIndex !== -1) {
 				const numberStr = trimmed.slice(1, closingIndex);
 				const isDigits =
-					numberStr.length > 0 && Array.from(numberStr).every((char) => char >= '0' && char <= '9');
+					numberStr.length > 0 &&
+					Array.from(numberStr).every((char) => char >= '0' && char <= '9');
 
 				if (isDigits) {
 					return {

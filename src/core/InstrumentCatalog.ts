@@ -1,4 +1,4 @@
-export const GENERAL_MIDI_INSTRUMENTS = [
+export const GENERAL_MIDI_INSTRUMENTS: string[] = [
 	'Acoustic Grand Piano',
 	'Bright Acoustic Piano',
 	'Electric Grand Piano',
@@ -129,6 +129,6 @@ export const GENERAL_MIDI_INSTRUMENTS = [
 	'Gunshot'
 ];
 
-export function getInstrumentName(program) {
+export function getInstrumentName(program: number): string {
 	return GENERAL_MIDI_INSTRUMENTS[Math.max(0, Math.min(127, Number(program) || 0))] ?? 'Unknown';
 }

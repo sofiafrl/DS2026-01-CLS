@@ -2,17 +2,20 @@
 	"name": "gerador-musical-texto",
 	"version": "1.0.0",
 	"description": "Gerador de música a partir de texto com vozes em fuga, front em HTML e back em JavaScript.",
-	"main": "server.js",
 	"type": "module",
 	"scripts": {
-		"start": "node server.js",
-		"dev": "node --watch server.js",
-		"test": "node test/musicInterpreter.test.js",
+		"start": "vite",
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"test": "tsx test/musicInterpreter.test.ts",
 		"format": "prettier --write ."
 	},
-	"dependencies": {},
 	"devDependencies": {
-		"prettier": "^3.2.5"
+		"@types/node": "^25.9.1",
+		"prettier": "^3.2.5",
+		"tsx": "^4.22.4",
+		"typescript": "^6.0.3",
+		"vite": "^8.0.14"
 	},
 	"engines": {
 		"node": ">=18"

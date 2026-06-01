@@ -2,7 +2,7 @@
 
 ## Interface oficial
 
-A interface oficial do protótipo é a página estática `index.html` localizada na pasta `src/`, servida pelo script de desenvolvimento local.
+A interface oficial do protótipo é a página estática `index.html` localizada na raiz do projeto, servida pelo script de desenvolvimento local.
 
 Essa decisão foi mantida porque a interface estática concentra o fluxo funcional da Fase 2: entrada por texto, leitura de TXT, salvamento de TXT, configurações musicais, reprodução sonora, listagem de eventos e download MIDI.
 
@@ -25,11 +25,10 @@ Como a Fase 3 enfatiza bad smells, o código foi organizado para evitar uma úni
 - `Rules`: regras de mapeamento de caracteres.
 - `MusicInterpreter`: orquestração da interpretação.
 - `MidiWriter`: geração binária do arquivo MIDI.
-- `server.js`: Servidor estático de desenvolvimento na raiz (zero dependências).
-- `src/app.js`: coordenação da interface estática.
-- `src/musicService.js`: orquestração e execução local da interpretação e geração de MIDI.
-- `src/AudioPlayer.js`: reprodução no navegador com Web Audio API.
-- `src/fileService.js`: leitura de TXT e downloads.
-- `src/pieceRenderer.js`: renderização do resumo e dos eventos musicais.
+- `src/app.ts`: coordenação da interface estática.
+- `src/musicService.ts`: orquestração e execução local da interpretação e geração de MIDI.
+- `src/AudioPlayer.ts`: reprodução no navegador com Web Audio API.
+- `src/fileService.ts`: leitura de TXT e downloads.
+- `src/pieceRenderer.ts`: renderização do resumo e dos eventos musicais.
 
 Essa separação reduz classe grande, método longo, duplicação, lista longa de parâmetros e switch/if-else concentrado.

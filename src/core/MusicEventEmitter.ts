@@ -1,4 +1,7 @@
-const NOTE_TO_SEMITONE = {
+import { MusicEvent } from './types.js';
+import { VoiceContext } from './VoiceContext.js';
+
+const NOTE_TO_SEMITONE: Record<string, number> = {
 	C: 0,
 	D: 2,
 	E: 4,
@@ -9,22 +12,20 @@ const NOTE_TO_SEMITONE = {
 	B: 11
 };
 
-export function hasNote(character) {
+export function hasNote(character: string): boolean {
 	return Object.prototype.hasOwnProperty.call(NOTE_TO_SEMITONE, character);
 }
 
-export function toMidi(note, octave) {
+export function toMidi(note: string, octave: number): number {
 	return 12 * (octave + 1) + NOTE_TO_SEMITONE[note];
 }
 
 const DEFAULT_EVENT_DURATION = 1;
 
 export class MusicEventEmitter {
-	// Rules delegate event creation here so text mapping stays separate from
-	// the internal event shape.
-	emitNote(context, note) {
+	emitNote(context: VoiceContext, note: string): MusicEvent {
 		const duration = DEFAULT_EVENT_DURATION;
-		const event = {
+		const event: MusicEvent = {
 			type: 'note',
 			voice: context.voiceIndex,
 			beat: context.beat,
@@ -47,16 +48,18 @@ export class MusicEventEmitter {
 		return event;
 	}
 
-	emitFlatMi(context) {
+	emitFlatMi(context: VoiceContext): MusicEvent {
 		const event = this.emitNote(context, 'E');
 
 		event.note = 'Mb';
-		event.midi -= 1;
+		if (event.midi !== null && event.midi !== undefined) {
+			event.midi -= 1;
+		}
 
 		return event;
 	}
 
-	emitRest(context) {
+	emitRest(context: VoiceContext) {
 		const duration = DEFAULT_EVENT_DURATION;
 		context.addEvent({
 			type: 'rest',
@@ -74,7 +77,7 @@ export class MusicEventEmitter {
 		context.advance();
 	}
 
-	repeatLastNoteOrRest(context) {
+	repeatLastNoteOrRest(context: VoiceContext) {
 		if (context.lastProcessedWasNote && context.lastNote) {
 			this.emitNote(context, context.lastNote);
 			return;
