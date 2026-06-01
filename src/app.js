@@ -1,4 +1,4 @@
-import { fetchInstruments, fetchMidi, interpretText } from './musicService.js';
+import { getInstruments, generateMidi, interpretText } from './musicService.js';
 import { AudioPlayer } from './audioPlayer.js';
 import { downloadBlob, downloadText, readTextFile } from './fileService.js';
 import { renderPiece } from './pieceRenderer.js';
@@ -46,8 +46,8 @@ function updateLabels() {
 	elements.charCount.textContent = `${elements.textInput.value.length} caract.`;
 }
 
-async function loadInstruments() {
-	const instruments = await fetchInstruments();
+function loadInstruments() {
+	const instruments = getInstruments();
 
 	elements.instrumentInput.innerHTML = instruments
 		.map((instrument) => `<option value="${instrument.program}">${instrument.name}</option>`)
@@ -56,14 +56,14 @@ async function loadInstruments() {
 	elements.instrumentInput.value = '24';
 }
 
-async function interpret() {
-	state.lastPiece = await interpretText(elements.textInput.value, currentOptions());
+function interpret() {
+	state.lastPiece = interpretText(elements.textInput.value, currentOptions());
 	renderPiece(elements.summary, elements.eventsOutput, state.lastPiece);
 	return state.lastPiece;
 }
 
-async function downloadMidi() {
-	const blob = await fetchMidi(elements.textInput.value, currentOptions());
+function downloadMidi() {
+	const blob = generateMidi(elements.textInput.value, currentOptions());
 	downloadBlob(blob, 'gerador-musical.mid');
 }
 
@@ -85,7 +85,7 @@ function setExample() {
 	updateLabels();
 }
 
-async function playMusic() {
+function playMusic() {
 	if (audioPlayer.isCurrentlyPlaying()) return;
 
 	if (audioPlayer.canResume()) {
@@ -93,11 +93,11 @@ async function playMusic() {
 		return;
 	}
 
-	audioPlayer.play(await interpret());
+	audioPlayer.play(interpret());
 }
 
-async function restartMusic() {
-	const piece = state.lastPiece ?? (await interpret());
+function restartMusic() {
+	const piece = state.lastPiece ?? interpret();
 	audioPlayer.restart(piece);
 }
 
@@ -114,5 +114,5 @@ elements.fileInput.addEventListener('change', (event) => openTextFile(event.targ
 	}
 );
 
-await loadInstruments();
+loadInstruments();
 updateLabels();

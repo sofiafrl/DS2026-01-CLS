@@ -6,16 +6,16 @@ import { validateInterpretRequest } from './core/InputValidator.js';
 const interpreter = new MusicInterpreter();
 const midiWriter = new MidiWriter();
 
-export async function fetchInstruments() {
+export function getInstruments() {
 	return GENERAL_MIDI_INSTRUMENTS.map((name, program) => ({ program, name }));
 }
 
-export async function interpretText(text, options) {
+export function interpretText(text, options) {
 	const validated = validateInterpretRequest({ text, options });
 	return interpreter.interpret(validated.text, validated.options);
 }
 
-export async function fetchMidi(text, options) {
+export function generateMidi(text, options) {
 	const validated = validateInterpretRequest({ text, options });
 	const piece = interpreter.interpret(validated.text, validated.options);
 	const midiBytes = midiWriter.write(piece);
