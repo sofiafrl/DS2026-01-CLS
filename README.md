@@ -60,7 +60,7 @@ src/
   styles.css       Estilo da interface
   app.js           Coordenação da interface
   musicService.js  Integração local no frontend (chama o interpretador)
-  audioPlayer.js   Reprodução Web Audio
+  AudioPlayer.js   Reprodução Web Audio
   fileService.js   Leitura e download de arquivos
   pieceRenderer.js Renderização dos eventos musicais
   core/            Regras, parser e interpretador musical (JS puro)

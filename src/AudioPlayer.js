@@ -50,35 +50,7 @@ export class AudioPlayer {
 		for (const voice of piece.voices) {
 			for (const event of voice.events) {
 				if (event.type !== 'note') continue;
-
-				const audibleDuration = event.durationSeconds * 0.92;
-				const audibleEnd = event.startSeconds + audibleDuration;
-
-				if (audibleEnd <= this.pausedAtSeconds) continue;
-
-				// The core interpreter already accumulated tempo changes into seconds.
-				const start = Math.max(
-					this.audioContext.currentTime + 0.01,
-					this.startedAt + event.startSeconds
-				);
-				const duration = audibleEnd - Math.max(this.pausedAtSeconds, event.startSeconds);
-				const oscillator = this.audioContext.createOscillator();
-				const gain = this.audioContext.createGain();
-				const attackEnd = start + Math.min(0.02, duration * 0.5);
-
-				oscillator.type = waveformForInstrument(event.instrument);
-				oscillator.frequency.value = midiToFrequency(event.midi);
-				gain.gain.setValueAtTime(0.0001, start);
-				gain.gain.exponentialRampToValueAtTime(
-					Math.max(0.002, (event.volume / 127) * 0.18),
-					attackEnd
-				);
-				gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-
-				oscillator.connect(gain).connect(this.audioContext.destination);
-				oscillator.start(start);
-				oscillator.stop(start + duration + 0.03);
-				this.scheduledNodes.push(oscillator);
+				const audibleEnd = this.scheduleNote(event);
 				lastAudibleSecond = Math.max(lastAudibleSecond, audibleEnd);
 			}
 		}
@@ -92,6 +64,36 @@ export class AudioPlayer {
 			},
 			Math.max(0, (lastAudibleSecond - this.pausedAtSeconds) * 1000 + 120)
 		);
+	}
+
+	scheduleNote(event) {
+		const audibleDuration = event.durationSeconds * 0.92;
+		const audibleEnd = event.startSeconds + audibleDuration;
+
+		if (audibleEnd <= this.pausedAtSeconds) return 0;
+
+		// The core interpreter already accumulated tempo changes into seconds.
+		const start = Math.max(
+			this.audioContext.currentTime + 0.01,
+			this.startedAt + event.startSeconds
+		);
+		const duration = audibleEnd - Math.max(this.pausedAtSeconds, event.startSeconds);
+		const oscillator = this.audioContext.createOscillator();
+		const gain = this.audioContext.createGain();
+		const attackEnd = start + Math.min(0.02, duration * 0.5);
+
+		oscillator.type = waveformForInstrument(event.instrument);
+		oscillator.frequency.value = midiToFrequency(event.midi);
+		gain.gain.setValueAtTime(0.0001, start);
+		gain.gain.exponentialRampToValueAtTime(Math.max(0.002, (event.volume / 127) * 0.18), attackEnd);
+		gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+		oscillator.connect(gain).connect(this.audioContext.destination);
+		oscillator.start(start);
+		oscillator.stop(start + duration + 0.03);
+		this.scheduledNodes.push(oscillator);
+
+		return audibleEnd;
 	}
 
 	pause() {

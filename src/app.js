@@ -1,5 +1,5 @@
 import { getInstruments, generateMidi, interpretText } from './musicService.js';
-import { AudioPlayer } from './audioPlayer.js';
+import { AudioPlayer } from './AudioPlayer.js';
 import { downloadBlob, downloadText, readTextFile } from './fileService.js';
 import { renderPiece } from './pieceRenderer.js';
 

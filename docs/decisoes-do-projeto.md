@@ -28,7 +28,7 @@ Como a Fase 3 enfatiza bad smells, o código foi organizado para evitar uma úni
 - `server.js`: Servidor estático de desenvolvimento na raiz (zero dependências).
 - `src/app.js`: coordenação da interface estática.
 - `src/musicService.js`: orquestração e execução local da interpretação e geração de MIDI.
-- `src/audioPlayer.js`: reprodução no navegador com Web Audio API.
+- `src/AudioPlayer.js`: reprodução no navegador com Web Audio API.
 - `src/fileService.js`: leitura de TXT e downloads.
 - `src/pieceRenderer.js`: renderização do resumo e dos eventos musicais.
 
