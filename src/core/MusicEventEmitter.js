@@ -1,5 +1,3 @@
-import { MusicEvent } from './MusicEvent.js';
-
 const NOTE_TO_SEMITONE = {
 	C: 0,
 	D: 2,
@@ -23,10 +21,10 @@ const DEFAULT_EVENT_DURATION = 1;
 
 export class MusicEventEmitter {
 	// Rules delegate event creation here so text mapping stays separate from
-	// the internal MusicEvent shape.
+	// the internal event shape.
 	emitNote(context, note) {
 		const duration = DEFAULT_EVENT_DURATION;
-		const event = new MusicEvent({
+		const event = {
 			type: 'note',
 			voice: context.voiceIndex,
 			beat: context.beat,
@@ -39,7 +37,7 @@ export class MusicEventEmitter {
 			volume: context.volume,
 			instrument: context.instrument,
 			bpm: context.bpm
-		});
+		};
 
 		context.addEvent(event);
 		context.lastNote = note;
@@ -60,19 +58,17 @@ export class MusicEventEmitter {
 
 	emitRest(context) {
 		const duration = DEFAULT_EVENT_DURATION;
-		context.addEvent(
-			new MusicEvent({
-				type: 'rest',
-				voice: context.voiceIndex,
-				beat: context.beat,
-				duration,
-				startSeconds: context.timeSeconds,
-				durationSeconds: context.durationSeconds(duration),
-				volume: context.volume,
-				instrument: context.instrument,
-				bpm: context.bpm
-			})
-		);
+		context.addEvent({
+			type: 'rest',
+			voice: context.voiceIndex,
+			beat: context.beat,
+			duration,
+			startSeconds: context.timeSeconds,
+			durationSeconds: context.durationSeconds(duration),
+			volume: context.volume,
+			instrument: context.instrument,
+			bpm: context.bpm
+		});
 
 		context.lastProcessedWasNote = false;
 		context.advance();

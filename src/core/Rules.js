@@ -74,8 +74,6 @@ export class BagpipeVowelRule extends TextRule {
 export class EvenDigitRule extends TextRule {
 	matches(character) {
 		return '02468'.includes(character);
-		//dígito par: trocar instrumento para o instrumento General MIDI
-		//cujo numero é igual ao valor do instrumento atual + valor do dígito
 	}
 
 	apply(character, context) {
@@ -109,8 +107,6 @@ export class OctaveDownRule extends TextRule {
 export class TubularBellsRule extends TextRule {
 	matches(character) {
 		return character === ';' || '13579'.includes(character);
-		//caractere ; ou dígito ímpar:
-		//trocar instrumento para General MIDI #15, Tubular Bells
 	}
 
 	apply(_character, context) {
