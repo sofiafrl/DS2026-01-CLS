@@ -2,10 +2,16 @@ function midiToFrequency(midi) {
 	return 440 * 2 ** ((midi - 69) / 12);
 }
 
+const WAVEFORM_INSTRUMENTS = {
+	triangle: [6, 20, 19, 70, 71], // Harpsichord, organs, woodwinds
+	square: [22, 109, 110, 114], // Accordion, bagpipe, kalimba, tinkle bell
+	sawtooth: [24, 25, 26, 27, 28, 29, 30, 31] // Guitars
+};
+
 function waveformForInstrument(program) {
-	if ([6, 20, 19, 70, 71].includes(program)) return 'triangle';
-	if ([22, 109, 110, 114].includes(program)) return 'square';
-	if (program >= 24 && program <= 31) return 'sawtooth';
+	if (WAVEFORM_INSTRUMENTS.triangle.includes(program)) return 'triangle';
+	if (WAVEFORM_INSTRUMENTS.square.includes(program)) return 'square';
+	if (WAVEFORM_INSTRUMENTS.sawtooth.includes(program)) return 'sawtooth';
 	return 'sine';
 }
 

@@ -29,7 +29,7 @@ export class LowercaseRestRule extends TextRule {
 	}
 
 	matches(character) {
-		return /^[a-h]$/.test(character);
+		return character >= 'a' && character <= 'h';
 	}
 
 	apply(_character, context) {
@@ -62,7 +62,7 @@ export class HarmonicaRule extends TextRule {
 
 export class BagpipeVowelRule extends TextRule {
 	matches(character) {
-		return /^[OoIiUu]$/.test(character);
+		return 'OoIiUu'.includes(character);
 	}
 
 	apply(_character, context) {
@@ -73,7 +73,7 @@ export class BagpipeVowelRule extends TextRule {
 
 export class EvenDigitRule extends TextRule {
 	matches(character) {
-		return /^[02468]$/.test(character);
+		return '02468'.includes(character);
 		//dígito par: trocar instrumento para o instrumento General MIDI
 		//cujo numero é igual ao valor do instrumento atual + valor do dígito
 	}
@@ -108,7 +108,7 @@ export class OctaveDownRule extends TextRule {
 
 export class TubularBellsRule extends TextRule {
 	matches(character) {
-		return character === ';' || /^[13579]$/.test(character);
+		return character === ';' || '13579'.includes(character);
 		//caractere ; ou dígito ímpar:
 		//trocar instrumento para General MIDI #15, Tubular Bells
 	}

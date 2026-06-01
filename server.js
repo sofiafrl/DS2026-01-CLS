@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const port = process.env.PORT || 3000;
+const port = process.env.PORT ?? 3000;
 
 const MIME_TYPES = {
 	'.html': 'text/html',
@@ -22,7 +22,7 @@ http
 		const urlPath = req.url === '/' ? 'index.html' : req.url;
 		const filePath = path.join(__dirname, 'src', urlPath.split('?')[0]);
 		const extname = path.extname(filePath);
-		const contentType = MIME_TYPES[extname] || 'application/octet-stream';
+		const contentType = MIME_TYPES[extname] ?? 'application/octet-stream';
 
 		fs.readFile(filePath, (err, content) => {
 			if (err) {

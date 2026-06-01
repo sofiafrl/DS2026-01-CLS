@@ -14,7 +14,7 @@ export class MusicInterpreter {
 	}
 
 	interpret(text, options = {}) {
-		const initialBpm = Number(options.bpm) || DEFAULT_MUSIC_OPTIONS.bpm;
+		const initialBpm = Number(options.bpm ?? DEFAULT_MUSIC_OPTIONS.bpm);
 		const initialVolume = options.volume !== undefined ? Number(options.volume) : undefined;
 		const initialInstrument =
 			options.instrument !== undefined ? Number(options.instrument) : undefined;
