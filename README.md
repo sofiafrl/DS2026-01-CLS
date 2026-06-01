@@ -4,7 +4,7 @@ Protótipo desenvolvido inteiramente em **HTML/CSS/JavaScript no front-end**, ro
 
 ## Interface oficial
 
-A interface oficial do protótipo é o arquivo `index.html` localizado na raiz do projeto. Opcionalmente, pode ser servido localmente utilizando o script de desenvolvimento incluso.
+A interface oficial do protótipo é o arquivo `index.html` localizado na pasta `src/` do projeto. Ele é servido localmente utilizando o script de desenvolvimento incluso na raiz do projeto.
 
 Os arquivos Svelte que ainda existirem no repositório não fazem parte do fluxo principal executado por `npm start`. Eles devem ser tratados como protótipo paralelo/legado até uma decisão futura de remoção ou migração completa.
 
@@ -55,16 +55,17 @@ npm test
 ## Estrutura
 
 ```text
-index.html       Front em HTML (na raiz do projeto)
-styles.css       Estilo da interface
-app.js           Coordenação da interface
-musicService.js  Integração local no frontend (chama o interpretador)
-audioPlayer.js   Reprodução Web Audio
-fileService.js   Leitura e download de arquivos
-pieceRenderer.js Renderização dos eventos musicais
-core/            Regras, parser e interpretador musical (JS puro)
-midi/            Escritor MIDI em JavaScript puro
-server.js        Servidor estático de desenvolvimento (zero dependências, opcional)
+src/
+  index.html       Front em HTML (interface gráfica)
+  styles.css       Estilo da interface
+  app.js           Coordenação da interface
+  musicService.js  Integração local no frontend (chama o interpretador)
+  audioPlayer.js   Reprodução Web Audio
+  fileService.js   Leitura e download de arquivos
+  pieceRenderer.js Renderização dos eventos musicais
+  core/            Regras, parser e interpretador musical (JS puro)
+  midi/            Escritor MIDI em JavaScript puro
+server.js        Servidor estático de desenvolvimento (zero dependências)
 test/
   musicInterpreter.test.js
 ```
