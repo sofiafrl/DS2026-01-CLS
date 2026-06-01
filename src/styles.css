@@ -1,0 +1,269 @@
+:root {
+	color-scheme: light;
+	--background: #f7f6f8;
+	--surface: #ffffff;
+	--surface-soft: #f1f1f3;
+	--border: #c9c9cf;
+	--text: #111111;
+	--muted: #757584;
+	--accent: #0984ff;
+	--shadow: 0 16px 32px rgba(24, 24, 27, 0.08);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family:
+		Inter,
+		ui-sans-serif,
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		sans-serif;
+	background: #202020;
+	color: var(--text);
+}
+
+.app-shell {
+	width: min(1400px, calc(100vw - 96px));
+	min-height: calc(100vh - 96px);
+	margin: 48px auto;
+	padding: 72px 36px 64px;
+	background: var(--background);
+}
+
+h1 {
+	margin: 0 0 40px;
+	text-align: center;
+	font-size: 30px;
+	line-height: 1;
+}
+
+h2 {
+	margin: 0;
+	font-size: 20px;
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: minmax(420px, 600px) minmax(420px, 1fr);
+	gap: 150px;
+	align-items: start;
+}
+
+.left-column,
+.right-column {
+	display: grid;
+	gap: 28px;
+}
+
+.card {
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: var(--surface);
+}
+
+.text-card {
+	min-height: 230px;
+	padding: 14px 16px;
+}
+
+.card-header-row,
+.text-actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.file-button,
+.secondary-button,
+.primary-button {
+	border: 0;
+	border-radius: 10px;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.file-button,
+.secondary-button {
+	padding: 8px 12px;
+	background: var(--surface-soft);
+	color: #2e2e35;
+	font-size: 14px;
+}
+
+.file-button input {
+	display: none;
+}
+
+.textarea-wrapper {
+	position: relative;
+	margin-top: 10px;
+}
+
+textarea {
+	width: 100%;
+	min-height: 178px;
+	resize: vertical;
+	border: 0;
+	border-radius: 6px;
+	padding: 16px 12px 32px;
+	background: var(--surface-soft);
+	color: var(--text);
+	font: inherit;
+	outline: none;
+}
+
+textarea:focus {
+	box-shadow: 0 0 0 2px var(--accent);
+}
+
+#charCount {
+	position: absolute;
+	right: 12px;
+	bottom: 8px;
+	color: var(--muted);
+	font-weight: 700;
+	font-size: 13px;
+}
+
+.text-actions {
+	justify-content: flex-end;
+	margin-top: 12px;
+}
+
+.config-card {
+	max-width: 500px;
+	padding: 14px 14px 16px;
+}
+
+.control-row {
+	display: grid;
+	grid-template-columns: 72px 1fr 42px;
+	align-items: center;
+	gap: 18px;
+	min-height: 50px;
+	border-bottom: 1px solid #ececf1;
+	color: var(--muted);
+	font-size: 18px;
+	font-weight: 650;
+}
+
+.control-row:last-child {
+	border-bottom: 0;
+}
+
+.control-row input[type='range'] {
+	width: 100%;
+	accent-color: var(--accent);
+}
+
+.select-row {
+	grid-template-columns: 96px minmax(180px, 1fr);
+}
+
+select {
+	width: 100%;
+	max-width: 220px;
+	border: 0;
+	border-radius: 8px;
+	padding: 7px 10px;
+	background: var(--surface-soft);
+	font: inherit;
+}
+
+.player-card {
+	width: min(560px, 100%);
+	min-height: 84px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	padding: 20px;
+}
+
+.primary-button {
+	min-width: 104px;
+	padding: 10px 18px;
+	background: var(--surface-soft);
+	color: #111111;
+	font-size: 20px;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.file-button:hover {
+	filter: brightness(0.97);
+}
+
+.result-card {
+	padding: 18px;
+	max-width: 560px;
+	box-shadow: var(--shadow);
+}
+
+.hint {
+	margin: 8px 0 16px;
+	color: var(--muted);
+}
+
+.summary {
+	padding: 12px;
+	border-radius: 8px;
+	background: var(--surface-soft);
+	font-weight: 650;
+}
+
+.events-output {
+	display: grid;
+	gap: 12px;
+	margin-top: 12px;
+	max-height: 360px;
+	overflow: auto;
+}
+
+.voice-block {
+	border: 1px solid #ececf1;
+	border-radius: 8px;
+	padding: 12px;
+}
+
+.voice-block h3 {
+	margin: 0 0 8px;
+	font-size: 16px;
+}
+
+.event-list {
+	margin: 0;
+	padding-left: 18px;
+	color: var(--muted);
+	font-size: 14px;
+}
+
+@media (max-width: 1050px) {
+	.app-shell {
+		width: calc(100vw - 32px);
+		margin: 16px auto;
+		padding: 40px 18px;
+	}
+
+	.layout {
+		grid-template-columns: 1fr;
+		gap: 28px;
+	}
+
+	.player-card,
+	.result-card,
+	.config-card {
+		max-width: none;
+		width: 100%;
+	}
+}

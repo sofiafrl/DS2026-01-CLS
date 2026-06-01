@@ -2,9 +2,9 @@
 
 ## Interface oficial
 
-A interface oficial do protótipo é a interface estática em `public/`, servida pelo Express em `src/server.js`.
+A interface oficial do protótipo é a página estática `index.html` localizada na raiz do projeto, servida pelo script de desenvolvimento local.
 
-Essa decisão foi mantida porque a interface em `public/` já concentra o fluxo funcional da Fase 2: entrada por texto, leitura de TXT, salvamento de TXT, configurações musicais, reprodução sonora, listagem de eventos e download MIDI.
+Essa decisão foi mantida porque a interface estática concentra o fluxo funcional da Fase 2: entrada por texto, leitura de TXT, salvamento de TXT, configurações musicais, reprodução sonora, listagem de eventos e download MIDI.
 
 Os arquivos Svelte presentes no repositório não são usados pelo comando `npm start` e não fazem parte da interface final atual. Eles permanecem apenas como protótipo paralelo/legado enquanto o grupo não decidir removê-los ou migrar completamente a interface.
 
@@ -25,11 +25,10 @@ Como a Fase 3 enfatiza bad smells, o código foi organizado para evitar uma úni
 - `Rules`: regras de mapeamento de caracteres.
 - `MusicInterpreter`: orquestração da interpretação.
 - `MidiWriter`: geração binária do arquivo MIDI.
-- `server.js`: API HTTP.
-- `public/app.js`: coordenação da interface estática.
-- `public/apiClient.js`: chamadas para a API HTTP.
-- `public/audioPlayer.js`: reprodução no navegador com Web Audio API.
-- `public/fileService.js`: leitura de TXT e downloads.
-- `public/pieceRenderer.js`: renderização do resumo e dos eventos musicais.
+- `src/app.ts`: coordenação da interface estática.
+- `src/musicService.ts`: orquestração e execução local da interpretação e geração de MIDI.
+- `src/AudioPlayer.ts`: reprodução no navegador com Web Audio API.
+- `src/fileService.ts`: leitura de TXT e downloads.
+- `src/pieceRenderer.ts`: renderização do resumo e dos eventos musicais.
 
 Essa separação reduz classe grande, método longo, duplicação, lista longa de parâmetros e switch/if-else concentrado.
