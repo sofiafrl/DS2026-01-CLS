@@ -6,7 +6,7 @@ Provide a clear and concise description of what this Pull Request does
 
 ## Relates to
 
-  - APPC# - Task Name
+- APPC# - Task Name
 
 ---
 
@@ -19,4 +19,4 @@ Include screenshots or any evidence of the changes made, if applicable.
 ## Notes or Known Issues
 
 - [ ] Tests not implemented
-- [ ] Other: 
+- [ ] Other:
