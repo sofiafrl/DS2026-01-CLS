@@ -5,12 +5,13 @@ function midiToFrequency(midi: number): number {
 }
 
 const WAVEFORM_INSTRUMENTS = {
-	triangle: [6, 20, 19, 70, 71], // Harpsichord, organs, woodwinds
-	square: [22, 109, 110, 114],   // Accordion, bagpipe, kalimba, tinkle bell
-	sawtooth: [24, 25, 26, 27, 28, 29, 30, 31] // Guitars
+	triangle: [6, 20, 19, 70, 71], // Harpsichord, organs and woodwinds.
+	square: [22, 109, 110, 114], // Accordion, bagpipe, kalimba and tinkle bell.
+	sawtooth: [24, 25, 26, 27, 28, 29, 30, 31] // Guitars.
 };
 
 function waveformForInstrument(program: number): 'triangle' | 'square' | 'sawtooth' | 'sine' {
+	// O navegador nao toca instrumentos MIDI reais; usamos formas de onda parecidas.
 	if (WAVEFORM_INSTRUMENTS.triangle.includes(program)) return 'triangle';
 	if (WAVEFORM_INSTRUMENTS.square.includes(program)) return 'square';
 	if (WAVEFORM_INSTRUMENTS.sawtooth.includes(program)) return 'sawtooth';
@@ -27,6 +28,7 @@ export class AudioPlayer {
 	private finishTimer: ReturnType<typeof setTimeout> | null = null;
 
 	canResume(): boolean {
+		// So e possivel continuar quando existe uma musica pausada em andamento.
 		return Boolean(this.currentPiece && !this.isPlaying && this.pausedAtSeconds > 0);
 	}
 
@@ -38,12 +40,14 @@ export class AudioPlayer {
 		if (!piece) return;
 
 		if (piece !== this.currentPiece) {
+			// Uma musica nova sempre comeca do zero, mesmo que outra estivesse pausada.
 			this.pausedAtSeconds = 0;
 		}
 
 		this.currentPiece = piece;
 		this.stopScheduledAudio();
 		this.audioContext = new AudioContext();
+		// Ajusta a origem do relogio para reutilizar a mesma linha do tempo ao continuar.
 		this.startedAt = this.audioContext.currentTime + 0.08 - this.pausedAtSeconds;
 		let lastAudibleSecond = this.pausedAtSeconds;
 
@@ -58,6 +62,7 @@ export class AudioPlayer {
 		this.isPlaying = true;
 		this.finishTimer = setTimeout(
 			() => {
+				// Ao terminar naturalmente, a proxima reproducao deve voltar ao inicio.
 				this.isPlaying = false;
 				this.pausedAtSeconds = 0;
 				this.stopScheduledAudio();
@@ -72,9 +77,10 @@ export class AudioPlayer {
 		const audibleDuration = event.durationSeconds * 0.92;
 		const audibleEnd = event.startSeconds + audibleDuration;
 
+		// Eventos totalmente anteriores ao ponto pausado nao precisam ser reagendados.
 		if (audibleEnd <= this.pausedAtSeconds) return 0;
 
-		// The core interpreter already accumulated tempo changes into seconds.
+		// O interpretador ja acumulou as mudancas de tempo em segundos absolutos.
 		const start = Math.max(
 			this.audioContext.currentTime + 0.01,
 			this.startedAt + event.startSeconds
@@ -84,6 +90,7 @@ export class AudioPlayer {
 		const gain = this.audioContext.createGain();
 		const attackEnd = start + Math.min(0.02, duration * 0.5);
 
+		// Cada nota usa um oscilador simples e um ganho com ataque/queda para evitar estalos.
 		oscillator.type = waveformForInstrument(event.instrument!);
 		oscillator.frequency.value = midiToFrequency(event.midi!);
 		gain.gain.setValueAtTime(0.0001, start);
@@ -101,6 +108,7 @@ export class AudioPlayer {
 	pause() {
 		if (!this.isPlaying || !this.audioContext) return;
 
+		// Guarda a posicao atual para que o botao play continue do mesmo ponto.
 		this.pausedAtSeconds = Math.max(0, this.audioContext.currentTime - this.startedAt);
 		this.isPlaying = false;
 		this.stopScheduledAudio();
@@ -129,7 +137,7 @@ export class AudioPlayer {
 			try {
 				node.stop();
 			} catch {
-				/* node already stopped */
+				/* nada para fazer, o node ja estava parado */
 			}
 		}
 		this.scheduledNodes = [];

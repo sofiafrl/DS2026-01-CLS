@@ -8,10 +8,12 @@ const interpreter = new MusicInterpreter();
 const midiWriter = new MidiWriter();
 
 export function getInstruments(): { program: number; name: string }[] {
+	// Converte o catalogo MIDI em opcoes simples para o select da interface.
 	return GENERAL_MIDI_INSTRUMENTS.map((name, program) => ({ program, name }));
 }
 
 export function interpretText(text: string, options: PlaybackOptions): MusicPiece {
+	// A mesma validacao protege tanto a interpretacao quanto a geracao de MIDI.
 	const validated = validateInterpretRequest({ text, options });
 	return interpreter.interpret(validated.text, validated.options);
 }

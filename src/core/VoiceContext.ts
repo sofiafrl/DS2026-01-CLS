@@ -33,13 +33,13 @@ export class VoiceContext {
 
 		this.voiceIndex = voiceIndex;
 		this.beat = delayBeats;
-		// Initial delay is measured with the initial BPM before any local tempo command is processed.
+		// O atraso inicial e medido com o BPM inicial antes de qualquer comando local.
 		this.timeSeconds = delayBeats * (60 / initialBpm);
 		this.bpm = initialBpm;
 		this.baseOctave = initialOctave ?? profile.baseOctave;
 		this.octave = this.baseOctave;
-		// Interface options currently override only the first voice.
-		// Other voices keep their Phase 2 fugue profiles.
+		// As opcoes da interface sobrescrevem apenas a primeira voz.
+		// As outras vozes mantem os perfis de fuga definidos para a Fase 2.
 		this.volume = initialVolume ?? profile.baseVolume;
 		this.instrument = initialInstrument ?? profile.baseInstrument;
 		this.lastNote = null;
@@ -52,11 +52,13 @@ export class VoiceContext {
 	}
 
 	advance(duration: number = 1) {
+		// Beat e segundos avancam juntos para preservar a ordem dos eventos.
 		this.timeSeconds += this.durationSeconds(duration);
 		this.beat += duration;
 	}
 
 	durationSeconds(duration: number = 1): number {
+		// A duracao real depende do BPM atual da voz naquele trecho.
 		return duration * (60 / this.bpm);
 	}
 

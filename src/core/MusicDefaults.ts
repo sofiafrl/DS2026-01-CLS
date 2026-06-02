@@ -14,6 +14,7 @@ export const DEFAULT_MUSIC_OPTIONS = {
 };
 
 const VOICE_PROFILES: VoiceProfile[] = [
+	// As vozes usam perfis diferentes para criar a sensacao de fuga/polifonia.
 	{ baseOctave: 6, baseVolume: 100, baseInstrument: 6 },
 	{ baseOctave: 5, baseVolume: 80, baseInstrument: 20 },
 	{ baseOctave: 4, baseVolume: 60, baseInstrument: 0 },
@@ -21,6 +22,7 @@ const VOICE_PROFILES: VoiceProfile[] = [
 ];
 
 export function getVoiceProfile(voiceIndex: number): VoiceProfile {
+	// Quando existem mais vozes que perfis, o resto da divisao reinicia o ciclo.
 	return VOICE_PROFILES[voiceIndex % VOICE_PROFILES.length];
 }
 

@@ -6,6 +6,7 @@ const TEXT_LIMITS = {
 };
 
 const OPTION_LIMITS = {
+	// Estes limites protegem a interface e mantem os valores dentro do dominio MIDI.
 	bpm: { min: 40, max: 220 },
 	volume: { min: 1, max: MUSIC_LIMITS.maxVolume },
 	octave: { min: MUSIC_LIMITS.minOctave, max: MUSIC_LIMITS.maxOctave },
@@ -33,6 +34,7 @@ function validateIntegerOption(options: any, name: keyof typeof OPTION_LIMITS, e
 	const limits = OPTION_LIMITS[name];
 
 	if (!Number.isInteger(value)) {
+		// Opcoes musicais fracionadas criariam estados ambiguos no interpretador.
 		errors.push(`${name} must be an integer.`);
 		return;
 	}
@@ -51,6 +53,7 @@ export function validateInterpretRequest(body: any = {}): {
 	const text = payload.text ?? '';
 	const options = payload.options ?? {};
 
+	// A validacao fica antes do interpretador para rejeitar entradas invalidas cedo.
 	if (typeof text !== 'string') {
 		errors.push('text must be a string.');
 	} else if (text.length > TEXT_LIMITS.maxLength) {
