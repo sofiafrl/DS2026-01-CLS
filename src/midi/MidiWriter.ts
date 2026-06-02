@@ -1,6 +1,7 @@
 import { MusicEvent, MusicPiece } from '../core/types.js';
 
 function writeVarLength(value: number): number[] {
+	// O formato MIDI usa inteiros de tamanho variavel para economizar bytes nos deltas.
 	let buffer = value & 0x7f;
 	const bytes: number[] = [];
 
@@ -27,6 +28,7 @@ function textToBytes(text: string): number[] {
 }
 
 function createChunk(name: string, data: number[]): Uint8Array {
+	// Todo bloco MIDI tem identificador de 4 letras, tamanho e conteudo.
 	return new Uint8Array([...textToBytes(name), ...intToBytes(data.length, 4), ...data]);
 }
 
@@ -45,8 +47,8 @@ function eventToMidiMessages(
 	channel: number,
 	ticksPerQuarter: number
 ): MidiMessage[] {
-	// The interpreter already accumulates tempo changes into absolute seconds.
-	// MIDI conversion only maps that shared timeline to ticks.
+	// O interpretador ja acumula as mudancas de BPM em segundos absolutos.
+	// A conversao MIDI apenas transforma essa linha do tempo comum em ticks.
 	const startSeconds = event.startSeconds;
 	const durationSeconds = event.durationSeconds;
 	const startTick = secondsToTicks(startSeconds, ticksPerQuarter, 120);
@@ -79,6 +81,7 @@ export class MidiWriter {
 		]);
 
 		const events: MidiMessage[] = [];
+		// Define o tempo padrao do arquivo MIDI e o nome da trilha.
 		events.push({ tick: 0, bytes: [0xff, 0x51, 0x03, 0x07, 0xa1, 0x20] });
 		events.push({
 			tick: 0,
@@ -86,6 +89,7 @@ export class MidiWriter {
 		});
 
 		for (const voice of piece.voices) {
+			// Cada voz usa um canal MIDI, reaproveitando canais quando passa de 16 vozes.
 			const channel = voice.index % 16;
 			for (const event of voice.events) {
 				events.push(...eventToMidiMessages(event, channel, this.ticksPerQuarter));
@@ -98,6 +102,7 @@ export class MidiWriter {
 		const trackData: number[] = [];
 
 		for (const event of events) {
+			// MIDI armazena o intervalo desde o evento anterior, nao o tempo absoluto.
 			const delta = Math.max(0, event.tick - previousTick);
 			trackData.push(...writeVarLength(delta), ...event.bytes);
 			previousTick = event.tick;

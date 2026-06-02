@@ -15,6 +15,7 @@ const state: AppState = {
 const audioPlayer = new AudioPlayer();
 
 const elements = {
+	// Centraliza os elementos do DOM para evitar buscas repetidas no restante do arquivo.
 	textInput: document.querySelector('#textInput') as HTMLTextAreaElement,
 	charCount: document.querySelector('#charCount') as HTMLElement,
 	fileInput: document.querySelector('#fileInput') as HTMLInputElement,
@@ -36,6 +37,7 @@ const elements = {
 };
 
 function currentOptions(): PlaybackOptions {
+	// Os valores da interface chegam como texto e sao convertidos para numero aqui.
 	return {
 		bpm: Number(elements.bpmInput.value),
 		volume: Number(elements.volumeInput.value),
@@ -62,6 +64,7 @@ function loadInstruments() {
 }
 
 function interpret(): MusicPiece {
+	// Interpretar tambem atualiza o painel para manter audio e visualizacao sincronizados.
 	state.lastPiece = interpretText(elements.textInput.value, currentOptions());
 	renderPiece(elements.summary, elements.eventsOutput, state.lastPiece);
 	return state.lastPiece;
@@ -94,6 +97,7 @@ function playMusic() {
 	if (audioPlayer.isCurrentlyPlaying()) return;
 
 	if (audioPlayer.canResume()) {
+		// Quando a musica esta pausada, play continua sem reinterpretar o texto.
 		audioPlayer.play();
 		return;
 	}

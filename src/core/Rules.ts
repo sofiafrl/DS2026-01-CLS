@@ -11,11 +11,13 @@ export class NoteRule extends TextRule {
 	}
 
 	override matches(character: string, nextCharacter: string, _context: VoiceContext): boolean {
+		// A regra tambem reconhece "Mb", que representa Mi bemol no enunciado.
 		return hasNote(character) || (character === 'M' && nextCharacter === 'b');
 	}
 
 	override apply(character: string, context: VoiceContext, _nextCharacter: string): number {
 		if (character === 'M') {
+			// "Mb" consome dois caracteres: a letra M e o b que vem em seguida.
 			this.eventEmitter.emitFlatMi(context);
 			return 2;
 		}
@@ -162,6 +164,7 @@ export class RepeatOrRestRule extends TextRule {
 	}
 
 	override matches(_character: string, _nextCharacter: string, _context: VoiceContext): boolean {
+		// Regra final: qualquer caractere nao tratado pelas anteriores cai aqui.
 		return true;
 	}
 

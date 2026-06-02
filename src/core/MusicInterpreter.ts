@@ -12,8 +12,8 @@ export class MusicInterpreter {
 
 	constructor({ parser = new TextParser(), rules = DEFAULT_RULES }: { parser?: TextParser; rules?: TextRule[] } = {}) {
 		this.parser = parser;
-		// Validate rule objects once so the interpretation loop can stay focused
-		// on orchestration and polymorphic dispatch.
+		// Valida as regras uma unica vez para o loop de interpretacao ficar focado
+		// em orquestrar a leitura do texto e chamar o polimorfismo de cada regra.
 		this.rules = rules.map(assertTextRule);
 	}
 
@@ -25,6 +25,7 @@ export class MusicInterpreter {
 		const initialOctave = options.octave !== undefined ? Number(options.octave) : undefined;
 
 		const voices: MusicVoice[] = this.parser.parse(text).map((line) => {
+			// Cada linha vira uma voz independente, com seu proprio estado musical.
 			const context = new VoiceContext({
 				voiceIndex: line.index,
 				delayBeats: line.delayBeats,
@@ -65,6 +66,7 @@ export class MusicInterpreter {
 		while (cursor < line.length) {
 			const character = line[cursor];
 			const nextCharacter = line[cursor + 1] ?? '';
+			// A primeira regra compativel consome um ou mais caracteres do texto.
 			const rule = this.rules.find((candidate) =>
 				candidate.matches(character, nextCharacter, context)
 			);
