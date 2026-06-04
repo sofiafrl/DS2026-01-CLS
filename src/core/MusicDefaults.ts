@@ -27,12 +27,12 @@ export function getVoiceProfile(voiceIndex: number): VoiceProfile {
 }
 
 export function clampVolume(volume: number): number {
-	return Math.min(MUSIC_LIMITS.maxVolume, Number(volume));
+	return Math.min(MUSIC_LIMITS.maxVolume, volume);
 }
 
 export function clampInstrument(program: number): number {
 	return Math.max(
 		MUSIC_LIMITS.minInstrument,
-		Math.min(MUSIC_LIMITS.maxInstrument, Number(program))
+		Math.min(MUSIC_LIMITS.maxInstrument, program)
 	);
 }

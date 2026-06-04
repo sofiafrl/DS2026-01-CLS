@@ -23,15 +23,16 @@ export class InputValidationError extends Error {
 	}
 }
 
-export function validateInterpretRequest(payload: {
+export function validateInterpretRequest({
+	text,
+	options
+}: {
 	text: string;
 	options: PlaybackOptions;
 }): {
 	text: string;
 	options: PlaybackOptions;
 } {
-	const text = payload.text;
-	const options = payload.options;
 
 	// A validacao fica antes do interpretador para rejeitar entradas invalidas cedo.
 	if (text.length > TEXT_LIMITS.maxLength) {
