@@ -7,7 +7,7 @@
 		"start": "vite",
 		"dev": "vite",
 		"build": "tsc && vite build",
-		"test": "tsx test/musicInterpreter.test.ts",
+		"test": "node --import tsx --test test/*.test.ts",
 		"format": "prettier --write ."
 	},
 	"devDependencies": {

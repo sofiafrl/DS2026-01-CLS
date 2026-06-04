@@ -13,7 +13,7 @@ const NOTE_TO_SEMITONE: Record<string, number> = {
 };
 
 export function hasNote(character: string): boolean {
-	return Object.prototype.hasOwnProperty.call(NOTE_TO_SEMITONE, character);
+	return character in NOTE_TO_SEMITONE;
 }
 
 export function toMidi(note: string, octave: number): number {

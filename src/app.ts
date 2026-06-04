@@ -1,4 +1,4 @@
-import { getInstruments, generateMidi, interpretText } from './musicService.js';
+import { getInstruments, generateMidi, interpretText } from './MusicService.js';
 import { AudioPlayer } from './AudioPlayer.js';
 import { downloadBlob, downloadText, readTextFile } from './fileService.js';
 import { renderPiece } from './pieceRenderer.js';
@@ -16,24 +16,24 @@ const audioPlayer = new AudioPlayer();
 
 const elements = {
 	// Centraliza os elementos do DOM para evitar buscas repetidas no restante do arquivo.
-	textInput: document.querySelector('#textInput') as HTMLTextAreaElement,
-	charCount: document.querySelector('#charCount') as HTMLElement,
-	fileInput: document.querySelector('#fileInput') as HTMLInputElement,
-	saveTextButton: document.querySelector('#saveTextButton') as HTMLButtonElement,
-	exampleButton: document.querySelector('#exampleButton') as HTMLButtonElement,
-	bpmInput: document.querySelector('#bpmInput') as HTMLInputElement,
-	bpmValue: document.querySelector('#bpmValue') as HTMLElement,
-	volumeInput: document.querySelector('#volumeInput') as HTMLInputElement,
-	volumeValue: document.querySelector('#volumeValue') as HTMLElement,
-	octaveInput: document.querySelector('#octaveInput') as HTMLInputElement,
-	octaveValue: document.querySelector('#octaveValue') as HTMLElement,
-	instrumentInput: document.querySelector('#instrumentInput') as HTMLSelectElement,
-	playButton: document.querySelector('#playButton') as HTMLButtonElement,
-	pauseButton: document.querySelector('#pauseButton') as HTMLButtonElement,
-	restartButton: document.querySelector('#restartButton') as HTMLButtonElement,
-	downloadMidiButton: document.querySelector('#downloadMidiButton') as HTMLButtonElement,
-	summary: document.querySelector('#summary') as HTMLElement,
-	eventsOutput: document.querySelector('#eventsOutput') as HTMLElement
+	textInput: document.querySelector<HTMLTextAreaElement>('#textInput')!,
+	charCount: document.querySelector<HTMLElement>('#charCount')!,
+	fileInput: document.querySelector<HTMLInputElement>('#fileInput')!,
+	saveTextButton: document.querySelector<HTMLButtonElement>('#saveTextButton')!,
+	exampleButton: document.querySelector<HTMLButtonElement>('#exampleButton')!,
+	bpmInput: document.querySelector<HTMLInputElement>('#bpmInput')!,
+	bpmValue: document.querySelector<HTMLElement>('#bpmValue')!,
+	volumeInput: document.querySelector<HTMLInputElement>('#volumeInput')!,
+	volumeValue: document.querySelector<HTMLElement>('#volumeValue')!,
+	octaveInput: document.querySelector<HTMLInputElement>('#octaveInput')!,
+	octaveValue: document.querySelector<HTMLElement>('#octaveValue')!,
+	instrumentInput: document.querySelector<HTMLSelectElement>('#instrumentInput')!,
+	playButton: document.querySelector<HTMLButtonElement>('#playButton')!,
+	pauseButton: document.querySelector<HTMLButtonElement>('#pauseButton')!,
+	restartButton: document.querySelector<HTMLButtonElement>('#restartButton')!,
+	downloadMidiButton: document.querySelector<HTMLButtonElement>('#downloadMidiButton')!,
+	summary: document.querySelector<HTMLElement>('#summary')!,
+	eventsOutput: document.querySelector<HTMLElement>('#eventsOutput')!
 };
 
 function currentOptions(): PlaybackOptions {
@@ -117,8 +117,8 @@ elements.downloadMidiButton.addEventListener('click', downloadMidi);
 elements.saveTextButton.addEventListener('click', saveText);
 elements.exampleButton.addEventListener('click', setExample);
 elements.fileInput.addEventListener('change', (event) => {
-	const target = event.target as HTMLInputElement;
-	if (target.files && target.files[0]) {
+	const target = event.target;
+	if (target instanceof HTMLInputElement && target.files && target.files[0]) {
 		openTextFile(target.files[0]);
 	}
 });

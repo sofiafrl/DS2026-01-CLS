@@ -130,5 +130,5 @@ export const GENERAL_MIDI_INSTRUMENTS: string[] = [
 ];
 
 export function getInstrumentName(program: number): string {
-	return GENERAL_MIDI_INSTRUMENTS[Math.max(0, Math.min(127, Number(program) || 0))] ?? 'Unknown';
+	return GENERAL_MIDI_INSTRUMENTS[Math.max(0, Math.min(127, program || 0))] ?? 'Unknown';
 }

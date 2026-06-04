@@ -10,7 +10,10 @@ export class MusicInterpreter {
 	private parser: TextParser;
 	private rules: TextRule[];
 
-	constructor({ parser = new TextParser(), rules = DEFAULT_RULES }: { parser?: TextParser; rules?: TextRule[] } = {}) {
+	constructor({
+		parser = new TextParser(),
+		rules = DEFAULT_RULES
+	}: { parser?: TextParser; rules?: TextRule[] } = {}) {
 		this.parser = parser;
 		// Valida as regras uma unica vez para o loop de interpretacao ficar focado
 		// em orquestrar a leitura do texto e chamar o polimorfismo de cada regra.
@@ -18,11 +21,7 @@ export class MusicInterpreter {
 	}
 
 	interpret(text: string, options: PlaybackOptions = {}): MusicPiece {
-		const initialBpm = Number(options.bpm ?? DEFAULT_MUSIC_OPTIONS.bpm);
-		const initialVolume = options.volume !== undefined ? Number(options.volume) : undefined;
-		const initialInstrument =
-			options.instrument !== undefined ? Number(options.instrument) : undefined;
-		const initialOctave = options.octave !== undefined ? Number(options.octave) : undefined;
+		const initialBpm = options.bpm ?? DEFAULT_MUSIC_OPTIONS.bpm;
 
 		const voices: MusicVoice[] = this.parser.parse(text).map((line) => {
 			// Cada linha vira uma voz independente, com seu proprio estado musical.
@@ -30,9 +29,9 @@ export class MusicInterpreter {
 				voiceIndex: line.index,
 				delayBeats: line.delayBeats,
 				initialBpm,
-				initialVolume: line.index === 0 ? initialVolume : undefined,
-				initialInstrument: line.index === 0 ? initialInstrument : undefined,
-				initialOctave: line.index === 0 ? initialOctave : undefined
+				initialVolume: line.index === 0 ? options.volume : undefined,
+				initialInstrument: line.index === 0 ? options.instrument : undefined,
+				initialOctave: line.index === 0 ? options.octave : undefined
 			});
 
 			this.processLine(line.content, context);
