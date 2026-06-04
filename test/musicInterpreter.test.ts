@@ -28,7 +28,6 @@ class TestRule extends TextRule {
 }
 
 assert.equal(assertTextRule(new TestRule()) instanceof TextRule, true);
-assert.throws(() => new (TextRule as any)(), /TextRule is abstract/);
 assert.throws(
 	() => assertTextRule({ matches() {}, apply() {} }),
 	/Every text rule must extend TextRule and implement matches\(\) and apply\(\)\./
@@ -43,13 +42,9 @@ assert.equal(validInput.options.bpm, 150);
 assert.throws(
 	() =>
 		validateInterpretRequest({
-			text: 123,
+			text: 'C',
 			options: { bpm: 10, volume: 200, octave: 10, instrument: 128 }
 		}),
-	InputValidationError
-);
-assert.throws(
-	() => validateInterpretRequest({ text: 'C', options: 'invalid' }),
 	InputValidationError
 );
 

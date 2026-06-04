@@ -16,61 +16,39 @@ const OPTION_LIMITS = {
 export class InputValidationError extends Error {
 	public errors: string[];
 
-	constructor(errors: string[]) {
-		super('Invalid music input.');
+	constructor(message: string) {
+		super(message);
 		this.name = 'InputValidationError';
-		this.errors = errors;
+		this.errors = [message];
 	}
 }
 
-function isPlainObject(value: any): boolean {
-	return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function validateIntegerOption(options: any, name: keyof typeof OPTION_LIMITS, errors: string[]) {
-	if (options[name] === undefined) return;
-
-	const value = Number(options[name]);
-	const limits = OPTION_LIMITS[name];
-
-	if (!Number.isInteger(value)) {
-		// Opcoes musicais fracionadas criariam estados ambiguos no interpretador.
-		errors.push(`${name} must be an integer.`);
-		return;
-	}
-
-	if (value < limits.min || value > limits.max) {
-		errors.push(`${name} must be between ${limits.min} and ${limits.max}.`);
-	}
-}
-
-export function validateInterpretRequest(body: any = {}): {
+export function validateInterpretRequest(payload: {
+	text: string;
+	options: PlaybackOptions;
+}): {
 	text: string;
 	options: PlaybackOptions;
 } {
-	const errors: string[] = [];
-	const payload = isPlainObject(body) ? body : {};
-	const text = payload.text ?? '';
-	const options = payload.options ?? {};
+	const text = payload.text;
+	const options = payload.options;
 
 	// A validacao fica antes do interpretador para rejeitar entradas invalidas cedo.
-	if (typeof text !== 'string') {
-		errors.push('text must be a string.');
-	} else if (text.length > TEXT_LIMITS.maxLength) {
-		errors.push(`text must have at most ${TEXT_LIMITS.maxLength} characters.`);
+	if (text.length > TEXT_LIMITS.maxLength) {
+		throw new InputValidationError(`text must have at most ${TEXT_LIMITS.maxLength} characters.`);
 	}
 
-	if (!isPlainObject(options)) {
-		errors.push('options must be an object.');
-	} else {
-		validateIntegerOption(options, 'bpm', errors);
-		validateIntegerOption(options, 'volume', errors);
-		validateIntegerOption(options, 'octave', errors);
-		validateIntegerOption(options, 'instrument', errors);
-	}
-
-	if (errors.length > 0) {
-		throw new InputValidationError(errors);
+	for (const key of ['bpm', 'volume', 'octave', 'instrument'] as const) {
+		const value = options[key];
+		if (value !== undefined) {
+			const limits = OPTION_LIMITS[key];
+			if (!Number.isInteger(value)) {
+				throw new InputValidationError(`${key} must be an integer.`);
+			}
+			if (value < limits.min || value > limits.max) {
+				throw new InputValidationError(`${key} must be between ${limits.min} and ${limits.max}.`);
+			}
+		}
 	}
 
 	return {

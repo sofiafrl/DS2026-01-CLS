@@ -2,26 +2,21 @@ import { ParseLineResult } from './types.js';
 
 export class TextParser {
 	parse(text: string): ParseLineResult[] {
-		return String(text ?? '')
+		return text
 			.replaceAll('\r\n', '\n')
 			.split('\n')
 			.map((rawLine, index) => this.parseLine(rawLine, index))
 			.filter((voice) => voice.content.length > 0 || voice.delayBeats > 0);
 	}
 
-	parseLine(rawLine: string, index: number): ParseLineResult {
-		const line = String(rawLine ?? '');
+	parseLine(line: string, index: number): ParseLineResult {
 		const trimmed = line.trimStart();
 
 		if (trimmed.startsWith('[')) {
 			const closingIndex = trimmed.indexOf(']');
 			if (closingIndex !== -1) {
 				const numberStr = trimmed.slice(1, closingIndex);
-				const isDigits =
-					numberStr.length > 0 &&
-					Array.from(numberStr).every((char) => char >= '0' && char <= '9');
-
-				if (isDigits) {
+				if (isNumeric(numberStr)) {
 					return {
 						index,
 						delayBeats: Number(numberStr),
@@ -37,4 +32,13 @@ export class TextParser {
 			content: line
 		};
 	}
+}
+
+function isNumeric(str: string): boolean {
+	if (str.length === 0) return false;
+	for (let i = 0; i < str.length; i++) {
+		const char = str[i];
+		if (char < '0' || char > '9') return false;
+	}
+	return true;
 }
