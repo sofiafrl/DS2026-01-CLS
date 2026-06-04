@@ -56,4 +56,50 @@ describe('WebAudioSynth', () => {
 				mockOscillator.frequency.value < MIDI_C4_FREQ_MAX
 		);
 	});
+
+	it('mapeia corretamente os instrumentos para as formas de onda triangle, sawtooth e sine', () => {
+		const synth = new WebAudioSynth();
+
+		const mockOscillator = {
+			type: '',
+			frequency: { value: 0 },
+			connect() {
+				return this;
+			},
+			start() {},
+			stop() {}
+		};
+
+		const mockAudioContext = {
+			createOscillator: () => mockOscillator,
+			createGain: () => ({
+				gain: {
+					setValueAtTime() {},
+					exponentialRampToValueAtTime() {}
+				},
+				connect() {}
+			}),
+			destination: {}
+		} as unknown as AudioContext;
+
+		const testWaveform = (instrument: number, expectedWave: string) => {
+			const event: MusicEvent = {
+				type: 'note',
+				voice: 0,
+				beat: 0,
+				duration: 1,
+				startSeconds: 0.0,
+				durationSeconds: 0.5,
+				midi: 60,
+				volume: 100,
+				instrument
+			};
+			synth.playNote(mockAudioContext, event, 0.0, 0.5);
+			assert.equal(mockOscillator.type, expectedWave);
+		};
+
+		testWaveform(6, 'triangle');   // Harpsichord (triangle)
+		testWaveform(24, 'sawtooth');  // Nylon Guitar (sawtooth)
+		testWaveform(0, 'sine');       // Grand Piano (sine - default)
+	});
 });
