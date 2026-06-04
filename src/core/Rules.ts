@@ -1,6 +1,7 @@
 import { DEFAULT_EVENT_EMITTER, hasNote, MusicEventEmitter } from './MusicEventEmitter.js';
 import { TextRule } from './TextRule.js';
 import { VoiceContext } from './VoiceContext.js';
+import { INSTRUMENT_PRESETS } from './MusicDefaults.js';
 
 export class NoteRule extends TextRule {
 	private eventEmitter: MusicEventEmitter;
@@ -62,7 +63,7 @@ export class HarmonicaRule extends TextRule {
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
-		context.setInstrument(22);
+		context.setInstrument(INSTRUMENT_PRESETS.harmonica);
 		return 1;
 	}
 }
@@ -73,7 +74,7 @@ export class BagpipeVowelRule extends TextRule {
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
-		context.setInstrument(109);
+		context.setInstrument(INSTRUMENT_PRESETS.bagpipe);
 		return 1;
 	}
 }
@@ -117,7 +118,7 @@ export class TubularBellsRule extends TextRule {
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
-		context.setInstrument(14);
+		context.setInstrument(INSTRUMENT_PRESETS.tubularBells);
 		return 1;
 	}
 }
@@ -128,7 +129,7 @@ export class ChurchOrganRule extends TextRule {
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
-		context.setInstrument(19);
+		context.setInstrument(INSTRUMENT_PRESETS.churchOrgan);
 		return 1;
 	}
 }

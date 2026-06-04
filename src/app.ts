@@ -1,4 +1,4 @@
-import { getInstruments, generateMidi, interpretText } from './musicService.js';
+import { getInstruments, generateMidi, interpretText } from './MusicService.js';
 import { AudioPlayer } from './AudioPlayer.js';
 import { downloadBlob, downloadText, readTextFile } from './fileService.js';
 import { renderPiece } from './pieceRenderer.js';

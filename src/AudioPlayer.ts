@@ -1,22 +1,5 @@
 import { MusicEvent, MusicPiece } from './core/types.js';
-
-function midiToFrequency(midi: number): number {
-	return 440 * 2 ** ((midi - 69) / 12);
-}
-
-const WAVEFORM_INSTRUMENTS = {
-	triangle: [6, 20, 19, 70, 71], // Harpsichord, organs and woodwinds.
-	square: [22, 109, 110, 114], // Accordion, bagpipe, kalimba and tinkle bell.
-	sawtooth: [24, 25, 26, 27, 28, 29, 30, 31] // Guitars.
-};
-
-function waveformForInstrument(program: number): 'triangle' | 'square' | 'sawtooth' | 'sine' {
-	// O navegador nao toca instrumentos MIDI reais; usamos formas de onda parecidas.
-	if (WAVEFORM_INSTRUMENTS.triangle.includes(program)) return 'triangle';
-	if (WAVEFORM_INSTRUMENTS.square.includes(program)) return 'square';
-	if (WAVEFORM_INSTRUMENTS.sawtooth.includes(program)) return 'sawtooth';
-	return 'sine';
-}
+import { Synthesizer, WebAudioSynth } from './core/Synthesizer.js';
 
 export class AudioPlayer {
 	private audioContext: AudioContext | null = null;
@@ -26,6 +9,8 @@ export class AudioPlayer {
 	private pausedAtSeconds = 0;
 	private isPlaying = false;
 	private finishTimer: ReturnType<typeof setTimeout> | null = null;
+
+	constructor(private readonly synth: Synthesizer = new WebAudioSynth()) {}
 
 	canResume(): boolean {
 		// So e possivel continuar quando existe uma musica pausada em andamento.
@@ -86,21 +71,10 @@ export class AudioPlayer {
 			this.startedAt + event.startSeconds
 		);
 		const duration = audibleEnd - Math.max(this.pausedAtSeconds, event.startSeconds);
-		const oscillator = this.audioContext.createOscillator();
-		const gain = this.audioContext.createGain();
-		const attackEnd = start + Math.min(0.02, duration * 0.5);
 
-		// Cada nota usa um oscilador simples e um ganho com ataque/queda para evitar estalos.
-		oscillator.type = waveformForInstrument(event.instrument!);
-		oscillator.frequency.value = midiToFrequency(event.midi!);
-		gain.gain.setValueAtTime(0.0001, start);
-		gain.gain.exponentialRampToValueAtTime(Math.max(0.002, (event.volume! / 127) * 0.18), attackEnd);
-		gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-
-		oscillator.connect(gain).connect(this.audioContext.destination);
-		oscillator.start(start);
-		oscillator.stop(start + duration + 0.03);
-		this.scheduledNodes.push(oscillator);
+		// Delega a criação e agendamento da onda sonora para o sintetizador
+		const node = this.synth.playNote(this.audioContext, event, start, duration);
+		this.scheduledNodes.push(node);
 
 		return audibleEnd;
 	}

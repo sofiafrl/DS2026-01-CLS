@@ -26,9 +26,10 @@ Como a Fase 3 enfatiza bad smells, o código foi organizado para evitar uma úni
 - `MusicInterpreter`: orquestração da interpretação.
 - `MidiWriter`: geração binária do arquivo MIDI.
 - `src/app.ts`: coordenação da interface estática.
-- `src/musicService.ts`: orquestração e execução local da interpretação e geração de MIDI.
-- `src/AudioPlayer.ts`: reprodução no navegador com Web Audio API.
+- `src/MusicService.ts`: classe de orquestração de serviços com suporte à injeção de dependências.
+- `src/core/Synthesizer.ts`: interface de sintetizador e mecanismo de síntese Web Audio API (WebAudioSynth).
+- `src/AudioPlayer.ts`: controle de transporte da reprodução (play/pause/stop), delegando a síntese de som ao `Synthesizer`.
 - `src/fileService.ts`: leitura de TXT e downloads.
 - `src/pieceRenderer.ts`: renderização do resumo e dos eventos musicais.
 
-Essa separação reduz classe grande, método longo, duplicação, lista longa de parâmetros e switch/if-else concentrado.
+Essa separação reduz classe grande, método longo, duplicação, lista longa de parâmetros e switch/if-else concentrado, além de aplicar de maneira estrita o Princípio de Responsabilidade Única e o Princípio de Inversão de Dependências com injeção de dependências.

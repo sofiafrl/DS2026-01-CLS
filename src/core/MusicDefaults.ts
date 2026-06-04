@@ -36,3 +36,10 @@ export function clampInstrument(program: number): number {
 		Math.min(MUSIC_LIMITS.maxInstrument, program)
 	);
 }
+
+export const INSTRUMENT_PRESETS = {
+	harmonica: 22,
+	bagpipe: 109,
+	tubularBells: 14,
+	churchOrgan: 19
+};

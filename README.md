@@ -60,11 +60,11 @@ tsconfig.json    Configuração do TypeScript
 src/
   styles.css       Estilo da interface
   app.ts           Coordenação da interface
-  musicService.ts  Integração local no frontend (chama o interpretador)
-  AudioPlayer.ts   Reprodução Web Audio
+  MusicService.ts  Integração local no frontend (chama o interpretador)
+  AudioPlayer.ts   Reprodução Web Audio (controle de transporte)
   fileService.ts   Leitura e download de arquivos
   pieceRenderer.ts Renderização dos eventos musicais
-  core/            Regras, parser e interpretador musical (TypeScript)
+  core/            Regras, parser, interpretador e sintetizador (TypeScript)
   midi/            Escritor MIDI em TypeScript
 test/
   musicInterpreter.test.ts
