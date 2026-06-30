@@ -64,10 +64,19 @@ src/
   AudioPlayer.ts   Reprodução Web Audio (controle de transporte)
   fileService.ts   Leitura e download de arquivos
   pieceRenderer.ts Renderização dos eventos musicais
-  core/            Regras, parser, interpretador e sintetizador (TypeScript)
+  core/
+    TextParser.ts            Parser de entrada de texto com suporte a vozes
+    VoiceContext.ts          Estado de execução de uma voz (atributos musicais)
+    VoiceEventHistory.ts     Gerenciador de histórico de eventos (SRP)
+    MusicInterpreter.ts      Orquestração da interpretação de caracteres
+    Rules.ts                 Regras de mapeamento de caracteres para eventos
+    MusicEventEmitter.ts     Geração de eventos musicais
+    Synthesizer.ts           Interface de síntese de áudio
+    WebAudioSynth.ts         Implementação com Web Audio API
+    types.ts                 Definições de tipos TypeScript
   midi/            Escritor MIDI em TypeScript
 test/
-  musicInterpreter.test.ts
+  *.test.ts        Testes unitários
 ```
 
 ## Observações técnicas

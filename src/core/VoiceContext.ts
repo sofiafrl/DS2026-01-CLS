@@ -1,6 +1,10 @@
 import { clampInstrument, clampVolume, getVoiceProfile, MUSIC_LIMITS } from './MusicDefaults.js';
 import { MusicEvent } from './types.js';
+import { VoiceEventHistory } from './VoiceEventHistory.js';
 
+// Gerencia estado e atributos musicais de uma voz: BPM, volume, instrumento, oitava, posição de tempo.
+// Delega armazenamento de eventos para VoiceEventHistory (composição).
+// Interface mantém compatibilidade com getter `events` que retorna eventos do histórico.
 export class VoiceContext {
 	public voiceIndex: number;
 	public beat: number;
@@ -12,7 +16,7 @@ export class VoiceContext {
 	public instrument: number;
 	public lastNote: string | null;
 	public lastProcessedWasNote: boolean;
-	public events: MusicEvent[];
+	private eventHistory: VoiceEventHistory;
 
 	constructor({
 		voiceIndex,
@@ -44,11 +48,15 @@ export class VoiceContext {
 		this.instrument = initialInstrument ?? profile.baseInstrument;
 		this.lastNote = null;
 		this.lastProcessedWasNote = false;
-		this.events = [];
+		this.eventHistory = new VoiceEventHistory();
 	}
 
-	addEvent(event: MusicEvent) {
-		this.events.push(event);
+	addEvent(event: MusicEvent): void {
+		this.eventHistory.addEvent(event);
+	}
+
+	get events(): MusicEvent[] {
+		return this.eventHistory.getEvents();
 	}
 
 	advance(duration: number = 1) {
