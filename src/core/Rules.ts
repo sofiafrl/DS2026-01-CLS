@@ -1,23 +1,28 @@
-import { DEFAULT_EVENT_EMITTER, hasNote, MusicEventEmitter } from './MusicEventEmitter.js';
+import { hasNote, MusicEventEmitter } from './MusicEventEmitter.js';
 import { TextRule } from './TextRule.js';
 import { VoiceContext } from './VoiceContext.js';
 import { INSTRUMENT_PRESETS } from './MusicDefaults.js';
+import { MUSIC_COMMANDS } from './MusicCommands.js';
 
 export class NoteRule extends TextRule {
 	private eventEmitter: MusicEventEmitter;
 
-	constructor(eventEmitter: MusicEventEmitter = DEFAULT_EVENT_EMITTER) {
+	constructor(eventEmitter: MusicEventEmitter) {
 		super();
 		this.eventEmitter = eventEmitter;
 	}
 
 	override matches(character: string, nextCharacter: string, _context: VoiceContext): boolean {
 		// A regra tambem reconhece "Mb", que representa Mi bemol no enunciado.
-		return hasNote(character) || (character === 'M' && nextCharacter === 'b');
+		return (
+			hasNote(character) ||
+			(character === MUSIC_COMMANDS.FLAT_MI_PREFIX &&
+				nextCharacter === MUSIC_COMMANDS.FLAT_MI_SUFFIX)
+		);
 	}
 
 	override apply(character: string, context: VoiceContext, _nextCharacter: string): number {
-		if (character === 'M') {
+		if (character === MUSIC_COMMANDS.FLAT_MI_PREFIX) {
 			// "Mb" consome dois caracteres: a letra M e o b que vem em seguida.
 			this.eventEmitter.emitFlatMi(context);
 			return 2;
@@ -31,7 +36,7 @@ export class NoteRule extends TextRule {
 export class LowercaseRestRule extends TextRule {
 	private eventEmitter: MusicEventEmitter;
 
-	constructor(eventEmitter: MusicEventEmitter = DEFAULT_EVENT_EMITTER) {
+	constructor(eventEmitter: MusicEventEmitter) {
 		super();
 		this.eventEmitter = eventEmitter;
 	}
@@ -48,7 +53,7 @@ export class LowercaseRestRule extends TextRule {
 
 export class SpaceVolumeRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === ' ';
+		return character === MUSIC_COMMANDS.VOLUME_UP;
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -59,7 +64,7 @@ export class SpaceVolumeRule extends TextRule {
 
 export class HarmonicaRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === '!';
+		return character === MUSIC_COMMANDS.HARMONICA;
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -70,7 +75,7 @@ export class HarmonicaRule extends TextRule {
 
 export class BagpipeVowelRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return 'OoIiUu'.includes(character);
+		return MUSIC_COMMANDS.BAGPIPE_VOWELS.includes(character);
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -92,7 +97,7 @@ export class EvenDigitRule extends TextRule {
 
 export class OctaveUpRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === '?' || character === '.';
+		return character === MUSIC_COMMANDS.OCTAVE_UP_1 || character === MUSIC_COMMANDS.OCTAVE_UP_2;
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -103,7 +108,7 @@ export class OctaveUpRule extends TextRule {
 
 export class OctaveDownRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === 'V';
+		return character === MUSIC_COMMANDS.OCTAVE_DOWN;
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -114,7 +119,10 @@ export class OctaveDownRule extends TextRule {
 
 export class TubularBellsRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === ';' || '13579'.includes(character);
+		return (
+			character === MUSIC_COMMANDS.TUBULAR_BELLS_SEMICOLON ||
+			MUSIC_COMMANDS.TUBULAR_BELLS_ODD_DIGITS.includes(character)
+		);
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -125,7 +133,7 @@ export class TubularBellsRule extends TextRule {
 
 export class ChurchOrganRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === ',';
+		return character === MUSIC_COMMANDS.CHURCH_ORGAN;
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -136,7 +144,7 @@ export class ChurchOrganRule extends TextRule {
 
 export class BpmUpRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === '>';
+		return character === MUSIC_COMMANDS.BPM_UP;
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -147,7 +155,7 @@ export class BpmUpRule extends TextRule {
 
 export class BpmDownRule extends TextRule {
 	override matches(character: string, _nextCharacter: string, _context: VoiceContext): boolean {
-		return character === '<';
+		return character === MUSIC_COMMANDS.BPM_DOWN;
 	}
 
 	override apply(_character: string, context: VoiceContext, _nextCharacter: string): number {
@@ -159,7 +167,7 @@ export class BpmDownRule extends TextRule {
 export class RepeatOrRestRule extends TextRule {
 	private eventEmitter: MusicEventEmitter;
 
-	constructor(eventEmitter: MusicEventEmitter = DEFAULT_EVENT_EMITTER) {
+	constructor(eventEmitter: MusicEventEmitter) {
 		super();
 		this.eventEmitter = eventEmitter;
 	}
@@ -175,18 +183,22 @@ export class RepeatOrRestRule extends TextRule {
 	}
 }
 
-export const DEFAULT_RULES: TextRule[] = [
-	new NoteRule(),
-	new LowercaseRestRule(),
-	new SpaceVolumeRule(),
-	new HarmonicaRule(),
-	new BagpipeVowelRule(),
-	new EvenDigitRule(),
-	new OctaveUpRule(),
-	new OctaveDownRule(),
-	new TubularBellsRule(),
-	new ChurchOrganRule(),
-	new BpmUpRule(),
-	new BpmDownRule(),
-	new RepeatOrRestRule()
-];
+export function createDefaultRules(eventEmitter: MusicEventEmitter): TextRule[] {
+	return [
+		new NoteRule(eventEmitter),
+		new LowercaseRestRule(eventEmitter),
+		new SpaceVolumeRule(),
+		new HarmonicaRule(),
+		new BagpipeVowelRule(),
+		new EvenDigitRule(),
+		new OctaveUpRule(),
+		new OctaveDownRule(),
+		new TubularBellsRule(),
+		new ChurchOrganRule(),
+		new BpmUpRule(),
+		new BpmDownRule(),
+		new RepeatOrRestRule(eventEmitter)
+	];
+}
+
+export const DEFAULT_RULES: TextRule[] = createDefaultRules(new MusicEventEmitter());
