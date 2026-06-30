@@ -1,7 +1,6 @@
 import { TextParser } from './TextParser.js';
 import { VoiceContext } from './VoiceContext.js';
 import { DEFAULT_RULES } from './Rules.js';
-import { getInstrumentName } from './InstrumentCatalog.js';
 import { DEFAULT_MUSIC_OPTIONS } from './MusicDefaults.js';
 import { assertTextRule, TextRule } from './TextRule.js';
 import { MusicPiece, MusicVoice, PlaybackOptions } from './types.js';
@@ -36,16 +35,7 @@ export class MusicInterpreter {
 
 			this.processLine(line.content, context);
 
-			return {
-				index: line.index,
-				delayBeats: line.delayBeats,
-				baseOctave: context.baseOctave,
-				finalBpm: context.bpm,
-				finalVolume: context.volume,
-				finalInstrument: context.instrument,
-				finalInstrumentName: getInstrumentName(context.instrument),
-				events: context.events
-			};
+			return context.toMusicVoice();
 		});
 
 		return {

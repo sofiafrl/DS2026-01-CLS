@@ -1,6 +1,7 @@
 import { clampInstrument, clampVolume, getVoiceProfile, MUSIC_LIMITS } from './MusicDefaults.js';
-import { MusicEvent } from './types.js';
+import { MusicEvent, MusicVoice } from './types.js';
 import { VoiceEventHistory } from './VoiceEventHistory.js';
+import { getInstrumentName } from './InstrumentCatalog.js';
 
 // Gerencia estado e atributos musicais de uma voz: BPM, volume, instrumento, oitava, posição de tempo.
 // Delega armazenamento de eventos para VoiceEventHistory (composição).
@@ -17,6 +18,7 @@ export class VoiceContext {
 	public lastNote: string | null;
 	public lastProcessedWasNote: boolean;
 	private eventHistory: VoiceEventHistory;
+	private delayBeats: number;
 
 	constructor({
 		voiceIndex,
@@ -36,6 +38,7 @@ export class VoiceContext {
 		const profile = getVoiceProfile(voiceIndex);
 
 		this.voiceIndex = voiceIndex;
+		this.delayBeats = delayBeats;
 		this.beat = delayBeats;
 		// O atraso inicial e medido com o BPM inicial antes de qualquer comando local.
 		this.timeSeconds = delayBeats * (60 / initialBpm);
@@ -92,5 +95,18 @@ export class VoiceContext {
 
 	decreaseBpm() {
 		this.bpm = Math.max(MUSIC_LIMITS.minBpm, this.bpm - 10);
+	}
+
+	toMusicVoice(): MusicVoice {
+		return {
+			index: this.voiceIndex,
+			delayBeats: this.delayBeats,
+			baseOctave: this.baseOctave,
+			finalBpm: this.bpm,
+			finalVolume: this.volume,
+			finalInstrument: this.instrument,
+			finalInstrumentName: getInstrumentName(this.instrument),
+			events: this.events
+		};
 	}
 }
