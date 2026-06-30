@@ -91,5 +91,3 @@ export class MusicEventEmitter {
 		this.emitRest(context);
 	}
 }
-
-export const DEFAULT_EVENT_EMITTER = new MusicEventEmitter();

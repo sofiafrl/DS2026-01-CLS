@@ -1,4 +1,4 @@
-import { DEFAULT_EVENT_EMITTER, hasNote, MusicEventEmitter } from './MusicEventEmitter.js';
+import { hasNote, MusicEventEmitter } from './MusicEventEmitter.js';
 import { TextRule } from './TextRule.js';
 import { VoiceContext } from './VoiceContext.js';
 import { INSTRUMENT_PRESETS } from './MusicDefaults.js';
@@ -7,7 +7,7 @@ import { MUSIC_COMMANDS } from './MusicCommands.js';
 export class NoteRule extends TextRule {
 	private eventEmitter: MusicEventEmitter;
 
-	constructor(eventEmitter: MusicEventEmitter = DEFAULT_EVENT_EMITTER) {
+	constructor(eventEmitter: MusicEventEmitter) {
 		super();
 		this.eventEmitter = eventEmitter;
 	}
@@ -36,7 +36,7 @@ export class NoteRule extends TextRule {
 export class LowercaseRestRule extends TextRule {
 	private eventEmitter: MusicEventEmitter;
 
-	constructor(eventEmitter: MusicEventEmitter = DEFAULT_EVENT_EMITTER) {
+	constructor(eventEmitter: MusicEventEmitter) {
 		super();
 		this.eventEmitter = eventEmitter;
 	}
@@ -167,7 +167,7 @@ export class BpmDownRule extends TextRule {
 export class RepeatOrRestRule extends TextRule {
 	private eventEmitter: MusicEventEmitter;
 
-	constructor(eventEmitter: MusicEventEmitter = DEFAULT_EVENT_EMITTER) {
+	constructor(eventEmitter: MusicEventEmitter) {
 		super();
 		this.eventEmitter = eventEmitter;
 	}
@@ -183,18 +183,22 @@ export class RepeatOrRestRule extends TextRule {
 	}
 }
 
-export const DEFAULT_RULES: TextRule[] = [
-	new NoteRule(),
-	new LowercaseRestRule(),
-	new SpaceVolumeRule(),
-	new HarmonicaRule(),
-	new BagpipeVowelRule(),
-	new EvenDigitRule(),
-	new OctaveUpRule(),
-	new OctaveDownRule(),
-	new TubularBellsRule(),
-	new ChurchOrganRule(),
-	new BpmUpRule(),
-	new BpmDownRule(),
-	new RepeatOrRestRule()
-];
+export function createDefaultRules(eventEmitter: MusicEventEmitter): TextRule[] {
+	return [
+		new NoteRule(eventEmitter),
+		new LowercaseRestRule(eventEmitter),
+		new SpaceVolumeRule(),
+		new HarmonicaRule(),
+		new BagpipeVowelRule(),
+		new EvenDigitRule(),
+		new OctaveUpRule(),
+		new OctaveDownRule(),
+		new TubularBellsRule(),
+		new ChurchOrganRule(),
+		new BpmUpRule(),
+		new BpmDownRule(),
+		new RepeatOrRestRule(eventEmitter)
+	];
+}
+
+export const DEFAULT_RULES: TextRule[] = createDefaultRules(new MusicEventEmitter());

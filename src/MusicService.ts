@@ -28,16 +28,3 @@ export class MusicService {
 	}
 }
 
-export const defaultMusicService = new MusicService();
-
-export function getInstruments(): { program: number; name: string }[] {
-	return defaultMusicService.getInstruments();
-}
-
-export function interpretText(text: string, options: PlaybackOptions): MusicPiece {
-	return defaultMusicService.interpretText(text, options);
-}
-
-export function generateMidi(text: string, options: PlaybackOptions): Blob {
-	return defaultMusicService.generateMidi(text, options);
-}
