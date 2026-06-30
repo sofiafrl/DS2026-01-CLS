@@ -1,0 +1,15 @@
+export const MUSIC_COMMANDS = {
+	OCTAVE_UP_1: '?',
+	OCTAVE_UP_2: '.',
+	OCTAVE_DOWN: 'V',
+	BPM_UP: '>',
+	BPM_DOWN: '<',
+	VOLUME_UP: ' ',
+	HARMONICA: '!',
+	BAGPIPE_VOWELS: 'OoIiUu',
+	TUBULAR_BELLS_SEMICOLON: ';',
+	TUBULAR_BELLS_ODD_DIGITS: '13579',
+	CHURCH_ORGAN: ',',
+	FLAT_MI_PREFIX: 'M',
+	FLAT_MI_SUFFIX: 'b'
+} as const;
