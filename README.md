@@ -59,8 +59,9 @@ index.html       Front em HTML (interface gráfica)
 tsconfig.json    Configuração do TypeScript
 src/
   styles.css       Estilo da interface
-  app.ts           Coordenação da interface
-  MusicService.ts  Integração local no frontend (chama o interpretador)
+  app.ts           Inicialização da aplicação (3 linhas)
+  AppUI.ts         Coordenação orientada a objetos da interface
+  MusicService.ts  Orquestração de serviços musicais (injeção de dependências)
   AudioPlayer.ts   Reprodução Web Audio (controle de transporte)
   fileService.ts   Leitura e download de arquivos
   pieceRenderer.ts Renderização dos eventos musicais
@@ -71,7 +72,8 @@ src/
     MusicInterpreter.ts      Orquestração da interpretação de caracteres
     Rules.ts                 Regras de mapeamento de caracteres para eventos
     MusicEventEmitter.ts     Geração de eventos musicais
-    Synthesizer.ts           Interface de síntese de áudio
+    MusicCommands.ts         Constantes de mapeamento comandos (sem magic chars)
+    Synthesizer.ts           Interface de síntese de áudio com AUDIO_CONFIG
     WebAudioSynth.ts         Implementação com Web Audio API
     types.ts                 Definições de tipos TypeScript
   midi/            Escritor MIDI em TypeScript
