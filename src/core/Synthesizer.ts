@@ -4,17 +4,30 @@ export interface Synthesizer {
 	playNote(audioContext: AudioContext, event: MusicEvent, start: number, duration: number): OscillatorNode;
 }
 
-const WAVEFORM_INSTRUMENTS = {
-	triangle: [6, 20, 19, 70, 71], // Harpsichord, organs and woodwinds.
-	square: [22, 109, 110, 114], // Accordion, bagpipe, kalimba and tinkle bell.
-	sawtooth: [24, 25, 26, 27, 28, 29, 30, 31] // Guitars.
-};
+type WaveformType = 'triangle' | 'square' | 'sawtooth' | 'sine';
 
-function waveformForInstrument(program: number): 'triangle' | 'square' | 'sawtooth' | 'sine' {
-	if (WAVEFORM_INSTRUMENTS.triangle.includes(program)) return 'triangle';
-	if (WAVEFORM_INSTRUMENTS.square.includes(program)) return 'square';
-	if (WAVEFORM_INSTRUMENTS.sawtooth.includes(program)) return 'sawtooth';
-	return 'sine';
+const INSTRUMENT_WAVEFORM = new Map<number, WaveformType>([
+	[6, 'triangle'],
+	[20, 'triangle'],
+	[19, 'triangle'],
+	[70, 'triangle'],
+	[71, 'triangle'],
+	[22, 'square'],
+	[109, 'square'],
+	[110, 'square'],
+	[114, 'square'],
+	[24, 'sawtooth'],
+	[25, 'sawtooth'],
+	[26, 'sawtooth'],
+	[27, 'sawtooth'],
+	[28, 'sawtooth'],
+	[29, 'sawtooth'],
+	[30, 'sawtooth'],
+	[31, 'sawtooth']
+]);
+
+function waveformForInstrument(program: number): WaveformType {
+	return INSTRUMENT_WAVEFORM.get(program) ?? 'sine';
 }
 
 function midiToFrequency(midi: number): number {
